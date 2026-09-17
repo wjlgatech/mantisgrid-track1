@@ -34,23 +34,38 @@ We found it by checking the epoch range of `metric_node.csv` against both
 timezones before trusting any analysis — the day boundaries are clean in UTC+8 and
 ragged in UTC, which settles it in one command.
 
-### Magnitude answers *which*; onset answers *when*
+### Magnitude answers *which*; onset answers *when* — probably
 
 Our hypothesis was cascade-shaped and, we thought, obviously right: when one
 component fails everything downstream looks anomalous, the loudest is usually a
 victim, so **rank by who deviated first**. Shipped as a bundle it scored 0.093 —
-worse than doing nothing — and for twenty minutes we believed the idea was dead.
+worse than doing nothing.
 
-Decomposed, it is two ideas pointing opposite ways:
+Decomposed, the two halves point opposite ways: dating by onset gains +0.035,
+ranking by onset loses −0.033. **Neither of those individual effects survives the
+sample size** (`make significance`):
 
-- **Dating the fault by onset is worth +0.035.** Against a 60-second tolerance,
-  the first sample to leave the band beats the peak, which is systematically later
-  than the fault that caused it. `task_1` 0.167 → 0.250; `task_5` 0.225 → 0.325.
-- **Ranking by onset costs −0.033.** The first series to jitter is usually noise.
-  A large deviation is a real identifier; an early one is not.
+| effect | delta | 95% CI | verdict |
+|---|---|---|---|
+| onset timestamps | +0.035 | [−0.023, +0.095] | not significant |
+| onset ranking | −0.033 | [−0.085, +0.016] | not significant |
+| **both bundled** | **−0.071** | **[−0.132, −0.014]** | **significant** |
 
-The lesson is procedural, not technical: we nearly discarded the best single
-improvement we made because it was bundled with a bad one.
+Per-case scores have a standard deviation near 0.3 against effects near 0.03, so
+70 cases cannot resolve a third of a case per case. What we can say honestly:
+
+- **The bundle is genuinely worse.** That one clears the bar.
+- **The decomposition is directional, not proven.** `task_1` moves 0.167 → 0.250
+  and `task_5` 0.225 → 0.325, which is consistent with onset being a better
+  timestamp, and the mechanism is sound — the peak of a symptom is necessarily
+  later than the fault. But we would need several times this many cases to claim it.
+- **We ship peak-rank/onset-time because it is the point-estimate maximum, and we
+  state plainly that it is not distinguishable from peak/peak (0.199 vs 0.164).**
+
+The lesson is procedural: bundling two changes cost us the ability to attribute
+either, and unbundling them was not enough — the sample size still refuses to
+adjudicate. An earlier draft of this report presented both halves as findings.
+That was an overstatement, corrected here.
 
 ---
 
@@ -70,7 +85,10 @@ answers.** Given a ranked candidate table with baselines, peaks, z-scores and on
 times, it picked the top row every time. It scored identically to the free ranking
 because it *was* the free ranking; $0.098 and 8.2 minutes bought agreement.
 
-**With thinking off it changed all twenty and scored worse** — 0.225 → 0.163.
+**With thinking off it changed all twenty answers**, and scored 0.163 against
+0.225 — though at n=20 that gap is *not* statistically significant
+([−0.212, +0.075]). The reliable part of this row is the behaviour, not the score:
+it disagreed with the ranking on every single case.
 
 Our reading: the candidate table is already the answer. The free analysis does the
 work that matters and hands over a sorted list, and choosing from a sorted list is
@@ -126,9 +144,10 @@ measured gap between the top candidate and its rivals. Scored against the answer
 | Medium | 15 | 0.033 |
 | Low | 34 | **0.331** |
 
-**The cases it is most sure of are the ones it gets most wrong, by 3.2×.** It is
-not task-type confounding — the inversion holds inside `task_1` (High 0.000 vs Low
-0.500) and `task_5` (0.000 vs 0.464).
+**The cases it is most sure of are the ones it gets most wrong, by 3.2×.** This one
+*does* survive: Low − High = +0.228, 95% CI [+0.064, +0.385], permutation
+p = **0.0056**. It is not task-type confounding either — the inversion holds inside
+`task_1` (High 0.000 vs Low 0.500) and `task_5` (0.000 vs 0.464).
 
 `High` is awarded when one component both dominates on magnitude and has nothing
 anomalous before it. Our hypothesis, labelled as one: a component that is both
@@ -155,8 +174,19 @@ confidence, and the most likely thing that would let a model beat the table.
 
 **Logs.** Also never opened.
 
-**Honest estimate of our held-out score:** lower than 0.199. We tuned against all
-70 dev cases and are graded on a different deployment.
+**Honest estimate of our held-out score:** lower than 0.199, and we cannot put an
+interval on it. Resampling these 70 cases bounds sampling noise on *this*
+deployment; the judged run is a different deployment with different components, and
+nothing we can compute here estimates that gap. Our tunable constants (`Z_MIN`,
+`PCTL`, the trace threshold) were also chosen while looking at all 70, which is
+leakage we did not have time to remove with proper stratified k-fold.
+
+**A limitation of our headline result.** "The model adds nothing" is established
+only for the experiment we ran: a model choosing from a *static, pre-digested
+candidate table*. We never gave it tools to query the telemetry iteratively —
+narrow the window, pull a different KPI, walk a trace. An agent that asks its own
+next question is a different system and might well beat the table. We did not test
+it, and we are not claiming otherwise.
 
 ---
 

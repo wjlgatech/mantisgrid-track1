@@ -41,6 +41,21 @@ that because we measured the two changes separately instead of shipping them tog
 **2.7× the baseline.** Reproduce with `make ablate`; raw table in
 [`eval/results.md`](eval/results.md).
 
+**What survives a significance test** (`make significance`, paired bootstrap,
+10,000 resamples) — because 70 cases with a per-case sd of 0.3 cannot resolve a
+0.03 effect:
+
+| claim | delta | 95% CI | |
+|---|---|---|---|
+| the timezone fix | +0.092 | [+0.031, +0.153] | **real** |
+| both onset changes bundled | −0.071 | [−0.132, −0.014] | **really worse** |
+| onset timestamps alone | +0.035 | [−0.023, +0.095] | noise |
+| onset ranking alone | −0.033 | [−0.085, +0.016] | noise |
+| confidence inversion | +0.228 | [+0.064, +0.385], p=0.0056 | **real** |
+
+We ship the point-estimate maximum and say plainly that 0.199 is **not**
+distinguishable from the 0.164 of the timezone fix alone.
+
 Three things that table says:
 
 **1. A timezone was worth more than every clever idea combined (0.073 → 0.164).** The

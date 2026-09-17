@@ -22,9 +22,9 @@ and asked to pick the root cause, GLM-5.2 chose the top row every single time. I
 scored identically to the free ranking because it *was* the free ranking. The
 $0.098 and the 8.2 minutes bought agreement.
 
-**With thinking off, it changed every answer and got worse** — 0.225 down to 0.163.
-Not noise: it disagreed with the ranking on all twenty cases and was wrong more
-often for it.
+**With thinking off, it changed every answer** — all twenty — and scored 0.163
+against 0.225. The *behaviour* is exact; the *score gap* is not significant at
+n=20 (95% CI [−0.212, +0.075]), so we claim the first and not the second.
 
 So the model is either a rubber stamp or a liability, and which one you get is
 decided by a flag that costs 20–50× the output tokens.
@@ -56,5 +56,9 @@ spending 41% of the run's wall clock to reproduce an answer we already had.
 `agents/routed.py` remains in the repository, working and switchable
 (`--agent agents.routed`, `RCA_THINK=0|1`, `RCA_MODEL=<pin one model>`), because
 the measurement is the deliverable and it has to be reproducible.
+
+**Caveat we will not bury:** this tests a model choosing from a static candidate
+table. It does **not** test an agent with tools that asks its own next question of
+the telemetry. That is a different system and this result says nothing about it.
 
 Reproduce: `make compare` (needs `FEATHERLESS_API_KEY`; ~10 minutes, about $0.13).

@@ -44,6 +44,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from run import Solution, format_prediction   # noqa: E402
+from agents import traces                    # noqa: E402
 
 # The telemetry is UTC+8 (docs/data.md). Parsing the instruction's window in UTC
 # reads a window 8 hours off; worse, any window at 16:00 or later lands past the
@@ -60,6 +61,11 @@ RANK_BY = os.environ.get("RCA_RANK", "peak")
 TIME_BY = os.environ.get("RCA_TIME", "onset")
 
 Z_MIN = 4.0          # a series must clear this to count as anomalous at all
+# A trace finding is promoted above the metric ranking only when the wire-time
+# inflation is unambiguous. Metric z and trace z are not the same scale, so this
+# is a gate, not a comparison -- and the threshold is measured (eval/traces.md),
+# not guessed.
+NET_PROMOTE_Z = float(os.environ.get("RCA_NET_Z", "1000"))
 MAX_CANDIDATES = 12  # components carried into the evidence table
 
 MONTHS = {m: i for i, m in enumerate(
@@ -196,7 +202,8 @@ class Analysis:
     n: int
     date: str
     rows: int
-    findings: list[Finding] = field(default_factory=list)   # earliest onset first
+    findings: list[Finding] = field(default_factory=list)   # ranked, best first
+    net: list = field(default_factory=list)                 # traces.NetFinding, worst first
     note: str = ""                                          # why it is thin, if it is
 
 
@@ -273,6 +280,14 @@ def analyse(instruction: str, dataset_dir: Path) -> Analysis:
             reason=reason_for(row.kpi_name, row.component),
             n_anomalous=per_component.get(row.component, 1)))
 
+    # Network faults barely move a metric, so they get their own pass over the
+    # traces. See agents/traces.py for why the statistic is a tail and why the
+    # suspect is the caller.
+    try:
+        a.net = traces.network_findings(Path(dataset_dir), date, lo, hi)
+    except Exception as e:                      # noqa: BLE001 -- traces are a bonus
+        a.note = (a.note + f" Trace pass failed ({type(e).__name__}).").strip()
+
     # THE RANKING: earliest mover first, loudness only as tie-break -- or the
     # baseline's loudest-first, when ablating.
     if RANK_BY == "peak":
@@ -295,9 +310,32 @@ def _best_for(a: Analysis, component: str) -> Finding | None:
     return mine[0]
 
 
+def _net_reason(a: Analysis, component: str) -> str:
+    """Which network reason. Traces localise; metrics classify -- a span gap looks
+    identical for latency, loss, retransmission and corruption, so the choice
+    comes from that component's own network KPIs when it has any."""
+    for f in a.findings:
+        if f.component == component and f.reason and "network" in f.reason:
+            return f.reason
+    for f in a.findings:
+        if f.component == component and f.reason and (
+                "packet" in f.reason or "loss" in f.reason):
+            return f.reason
+    return "container network latency"
+
+
 def pick(a: Analysis) -> list[dict]:
-    """The n answers, one per distinct component, earliest mover first."""
+    """The n answers, one per distinct component, best candidate first."""
     seen, out = [], []
+    # A decisive wire-time inflation outranks the metric table: metrics cannot
+    # see a network fault, so their silence about one is not evidence.
+    if a.net and a.net[0].z >= NET_PROMOTE_Z:
+        n0 = a.net[0]
+        out.append({"datetime": n0.onset.strftime("%Y-%m-%d %H:%M:%S"),
+                    "component": n0.component, "reason": _net_reason(a, n0.component)})
+        seen.append(n0.component)
+        if len(out) >= a.n:
+            return out[:a.n]
     for f in a.findings:
         if f.component in seen:
             continue

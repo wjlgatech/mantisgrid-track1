@@ -3,7 +3,7 @@ QUERIES ?= $(DATASET)/dev/query_dev.csv
 OUT     ?= out/dev
 PY      ?= python3
 
-.PHONY: help dev score cost check calib ablate probe compare docker clean
+.PHONY: help dev score cost check calib ablate significance probe compare docker clean
 .DEFAULT_GOAL := help
 
 help:
@@ -28,6 +28,9 @@ calib: ## is the confidence word worth anything? -> eval/calibration.md
 
 ablate: ## measure each decision separately -> eval/results.md
 	$(PY) eval/ablate.py --dataset $(DATASET)
+
+significance: ## which findings survive the sample size -> eval/significance.md
+	$(PY) eval/significance.py
 
 probe: ## what each GLM model actually does -> eval/models.md (needs the key)
 	$(PY) eval/probe_models.py
