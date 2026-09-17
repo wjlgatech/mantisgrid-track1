@@ -108,9 +108,43 @@ def failure_count(instruction: str) -> int:
 
 # ------------------------------------------------------------------ the data
 
+# Ground truth names components at THREE levels -- service (44% of answers),
+# node (37%) and pod (19%) -- and v1 only ever produced two of them. A service
+# name like `adservice` was unreachable by construction, so 44% of the answer
+# space could not be emitted at any rank. metric_service.csv carries it: its
+# `service` column is `<name>-<protocol>` (adservice-grpc, frontend-http), and
+# stripping the protocol recovers all nine ground-truth service names exactly.
+SERVICE_PROTOCOLS = ("-grpc", "-http", "-tcp")
+
+
+def service_of(raw: str) -> str:
+    for suffix in SERVICE_PROTOCOLS:
+        if raw.endswith(suffix):
+            return raw[: -len(suffix)]
+    return raw
+
+
+def _load_services(dataset: Path, date: str) -> pd.DataFrame:
+    """metric_service.csv as (timestamp, cmdb_id, kpi_name, value), so service
+    rows flow through exactly the same z-score path as pods and nodes.
+
+    1 MB a day against metric_container's 265 MB -- the cheapest sensor in the
+    bundle, and the one that carries nearly half the answers."""
+    f = dataset / "telemetry" / date / "metric" / "metric_service.csv"
+    if not f.exists():
+        return pd.DataFrame(columns=["timestamp", "cmdb_id", "kpi_name", "value", "source"])
+    df = pd.read_csv(f)
+    df["cmdb_id"] = df.service.map(service_of)
+    long = df.melt(id_vars=["timestamp", "cmdb_id"], value_vars=["rr", "sr", "mrt", "count"],
+                   var_name="kpi_name", value_name="value")
+    long["source"] = "metric_service"
+    return long.dropna(subset=["value"])
+
+
 def _load_day(dataset: Path, date: str) -> pd.DataFrame:
-    """Container and node metrics for one day. Cached: the judged run reuses a
-    day across cases, and re-reading 300 MB per case is how a run times out."""
+    """Container, node and service metrics for one day. Cached: the judged run
+    reuses a day across cases, and re-reading 300 MB per case is how a run times
+    out."""
     key = (str(dataset), date)
     if key in _DAY_CACHE:
         return _DAY_CACHE[key]
@@ -122,6 +156,9 @@ def _load_day(dataset: Path, date: str) -> pd.DataFrame:
         df = pd.read_csv(f, usecols=["timestamp", "cmdb_id", "kpi_name", "value"])
         df["source"] = name
         frames.append(df)
+    svc = _load_services(dataset, date)
+    if not svc.empty:
+        frames.append(svc)
     out = (pd.concat(frames, ignore_index=True) if frames else
            pd.DataFrame(columns=["timestamp", "cmdb_id", "kpi_name", "value", "source"]))
     _DAY_CACHE[key] = out
@@ -129,7 +166,8 @@ def _load_day(dataset: Path, date: str) -> pd.DataFrame:
 
 
 def component_of(cmdb_id: str) -> str:
-    """metric_container is '<node>.<pod>'; metric_node is the node itself."""
+    """metric_container is '<node>.<pod>'; metric_node and metric_service already
+    carry the component name."""
     return cmdb_id.split(".", 1)[1] if "." in cmdb_id else cmdb_id
 
 
@@ -152,9 +190,19 @@ POD_REASONS = {"cpu": "container CPU load", "memory": "container memory load",
 LEGAL_REASONS = sorted(set(NODE_REASONS.values()) | set(POD_REASONS.values()))
 
 
+SERVICE_KPI_REASONS = {
+    "mrt": "container network latency",     # mean response time rose
+    "sr": "container process termination",  # success rate fell: callees dying
+    "rr": "container network latency",      # request rate disturbed
+    "count": "container network latency",
+}
+
+
 def reason_for(kpi: str, component: str) -> str | None:
     """None means this KPI has no legal reason at this component's level."""
     k = kpi.lower()
+    if k in SERVICE_KPI_REASONS:
+        return SERVICE_KPI_REASONS[k]
     table = NODE_REASONS if component.startswith("node-") else POD_REASONS
     if any(f in k for f in ("disk_read", "read_bytes", "diskio_read", "read_io")):
         return table.get("read")
@@ -189,6 +237,7 @@ class Finding:
     onset: datetime         # first in-window sample outside the band
     peak_at: datetime       # the most extreme in-window sample
     z: float                # how far outside, at its worst
+    zn: float               # that z as a percentile within its OWN source
     baseline: float         # the day's median for this series
     peak: float             # the most extreme in-window value
     reason: str | None
@@ -254,6 +303,18 @@ def analyse(instruction: str, dataset_dir: Path) -> Analysis:
                          j["max"], j["min"])
     j["component"] = j.cmdb_id.map(component_of)
 
+    # A z from metric_service (rr/sr/mrt/count) and a z from metric_container
+    # (CPU, bytes) are not the same quantity: different distributions, different
+    # tails. Ranking them against each other let services take 68% of the rank-1
+    # slots when they are only 44% of the answers, and cost 0.048 overall.
+    # So each source is scored against ITS OWN distribution: a series' rank is its
+    # percentile among that source's series in this window. Distribution-free, and
+    # it fits nothing about which answers happen to be correct.
+    # `source` is lost in the groupby that builds j, so put it back from the
+    # day frame: every cmdb_id comes from exactly one file.
+    j["source"] = j.cmdb_id.map(dict(zip(day.cmdb_id, day.source)))
+    j["zn"] = j.groupby("source").z.rank(pct=True)
+
     anomalous = j[j.z >= Z_MIN]
     if anomalous.empty:                      # nothing clears the bar: fall back to
         anomalous = j.nlargest(3, "z")       # the strongest few, and say so
@@ -276,6 +337,7 @@ def analyse(instruction: str, dataset_dir: Path) -> Analysis:
             component=row.component, cmdb_id=row.cmdb_id, kpi_name=row.kpi_name,
             onset=datetime.fromtimestamp(t, CST),
             peak_at=datetime.fromtimestamp(peak_t, CST), z=float(row.z),
+            zn=float(getattr(row, "zn", 0.0)),
             baseline=float(row.med), peak=float(row.peak),
             reason=reason_for(row.kpi_name, row.component),
             n_anomalous=per_component.get(row.component, 1)))
@@ -291,9 +353,9 @@ def analyse(instruction: str, dataset_dir: Path) -> Analysis:
     # THE RANKING: earliest mover first, loudness only as tie-break -- or the
     # baseline's loudest-first, when ablating.
     if RANK_BY == "peak":
-        findings.sort(key=lambda f: -f.z)
+        findings.sort(key=lambda f: (-f.zn, -f.z))
     else:
-        findings.sort(key=lambda f: (f.onset, -f.z))
+        findings.sort(key=lambda f: (f.onset, -f.zn))
     a.findings = findings
     return a
 
