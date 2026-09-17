@@ -2,6 +2,9 @@
 
 **35 seconds of demo. 25 seconds of slides.** Words in quotes are the script. Nothing else.
 
+*Measured: 181 spoken words — **64 seconds** at a normal 170 wpm, 57 at a brisk pace.
+Counted, not estimated. If you narrate the clicks as well, budget 75.*
+
 1. **Demo** → https://wjlgatech.github.io/mantisgrid-track1/docs/demo/
 2. **Slides** → https://wjlgatech.github.io/mantisgrid-track1/marketing/PRESENTATION.html
 
@@ -13,56 +16,50 @@
 
 ### Click **Solve** *(15s)*
 
-> "A system broke. Half an hour of production data, gigabytes of it.
-> **One second. No AI in this part at all.**"
+> "A system broke. Gigabytes of data, one half-hour.
+> **One second. No AI here.**"
 
-Point at **one** column:
+Point at one column:
 
-> "**`z` is the surprise score** — not *how hot*, but **how unusual for this machine.**
-> Something that runs hot every night isn't news."
+> "**`z` is the surprise score** — not *how hot*, but **how unusual for this machine.**"
 
-Scroll once, to **Ruled out**:
+Scroll to **Ruled out**:
 
-> "And here it **argues against itself** — 'this other one moved nine minutes *earlier*,
-> so I might be wrong.'"
+> "And it **argues against itself** — 'this one moved nine minutes *earlier*.'"
 
 ### Click **Grade the evidence** *(20s)*
 
-> "Now a second AI marks our report. Would this actually help someone at 3am?"
+> "Now a second AI marks it. Would this help someone at 3am?"
 
 When the cards land:
 
-> "**Three out of five.** It marked us down — and we shipped that.
+> "**Three out of five.** It marked us down. We shipped that.
 >
-> That's the *only* job the AI has here. We tested it as the **decision-maker** twice, and
-> it changed **zero of twenty** answers. It just agreed with our list. So it grades; it
-> doesn't decide."
+> That's its only job. As the **decision-maker** it changed **zero of twenty** answers,
+> twice. It grades; it doesn't decide."
 
 ---
 
 # Slides — 25 seconds
 
-### Slide 1 · WHAT *(8s)*
+### Slide 1 · WHAT *(7s)*
 
-> "When something breaks, everything downstream breaks too — so **twelve things are
-> shouting and the loudest is almost never the cause.** We find the one that moved
-> *first*. **2.7× better** than where we started."
+> "Everything downstream breaks too — so **the loudest alarm is almost never the cause.**
+> We find what moved *first*. **2.7× the baseline.**"
 
-### Slide 2 · WHY *(12s)* — **this is the one that has to land**
+### Slide 2 · WHY *(13s)* — **the one that has to land**
 
-> "Our machine says how sure it is. **It's backwards.**
-> Confident → right **1 time in 10**. Not sure → **1 in 3**.
+> "It says how sure it is. **It's backwards.** Confident → **1 in 10**. Not sure → **1 in 3**.
 >
-> Everyone builds the same safety net — *if it's unsure, ask a human.* That would hand
-> people the **easy** ones and let the mistakes through.
+> Everyone ships the same safety net — *if unsure, ask a human.* That hands people the
+> **easy** ones and lets mistakes through.
 >
-> Because a clean picture means 'nothing's wrong' — **or** 'the fire is in a room I can't
-> see into.'"
+> A clean picture means 'nothing's wrong' — **or** 'the fire is somewhere I can't see.'"
 
 ### Slide 3 · HOW *(5s)*
 
-> "Every number in the report is one it **measured**. Nothing invented — a made-up detail
-> sends someone chasing nothing at 3am."
+> "Every number is one it **measured**. Nothing invented — a made-up detail sends someone
+> chasing nothing at 3am."
 
 ---
 
