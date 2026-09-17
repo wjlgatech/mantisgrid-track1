@@ -3,7 +3,7 @@ QUERIES ?= $(DATASET)/dev/query_dev.csv
 OUT     ?= out/dev
 PY      ?= python3
 
-.PHONY: help dev score cost check calib ablate docker clean
+.PHONY: help dev score cost check calib ablate probe compare docker clean
 .DEFAULT_GOAL := help
 
 help:
@@ -28,6 +28,23 @@ calib: ## is the confidence word worth anything? -> eval/calibration.md
 
 ablate: ## measure each decision separately -> eval/results.md
 	$(PY) eval/ablate.py --dataset $(DATASET)
+
+probe: ## what each GLM model actually does -> eval/models.md (needs the key)
+	$(PY) eval/probe_models.py
+
+compare: ## free vs routed vs single-model on 20 cases -> eval/routed_compare.md
+	rm -rf out/free20 out/nothink out/think
+	$(PY) run.py --dataset $(DATASET) --queries $(QUERIES) --out out/free20 \
+	  --agent agents.rca --limit 20
+	RCA_THINK=0 $(PY) run.py --dataset $(DATASET) --queries $(QUERIES) \
+	  --out out/nothink --agent agents.routed --limit 20
+	RCA_THINK=1 $(PY) run.py --dataset $(DATASET) --queries $(QUERIES) \
+	  --out out/think --agent agents.routed --limit 20
+	@for d in free20 nothink think; do \
+	  echo "== $$d =="; \
+	  $(PY) score.py --predictions out/$$d/predictions.csv --queries $(QUERIES) | head -4; \
+	  test -f out/$$d/usage.jsonl && $(PY) cost.py out/$$d/usage.jsonl | tail -3 || true; \
+	done
 
 docker: ## build and run exactly as the judges do, on 2 cases
 	docker build -t rca-submission .

@@ -122,8 +122,46 @@ to recall one.
   single biggest accuracy lever left, and it is the most likely explanation for `task_3`
   (component only) scoring **0.000 in all five configurations** — the one number that did
   not move no matter what we did to the ranking.
-- **The routed LLM layer.** The model-routing harness is the core of this track's brief
-  and ours is unfinished; the scores above are from a model-free agent.
+- **Logs.** Also never opened.
+
+## The model does not earn its place, and we can show it
+
+Three configurations over the same 20 cases ([`eval/routed_compare.md`](eval/routed_compare.md)):
+
+| configuration | mean | s/case | $/case | answers changed vs free |
+|---|---|---|---|---|
+| no model at all | **0.225** | **1.2** | **$0.0000** | — |
+| GLM-5.2, thinking off | 0.163 | 5.4 | $0.0013 | **20 / 20** |
+| GLM-5.2, thinking on | **0.225** | 24.7 | $0.0049 | **0 / 20** |
+
+**Thinking on, the strongest model in the family changed none of the twenty answers.**
+It was handed a ranked table and picked the top row every time — $0.098 and 8.2 minutes
+to agree. Thinking off, it changed all twenty and scored worse.
+
+Two things about this family that are not in the docs, found by probing all seven models
+twice each ([`eval/models.md`](eval/models.md)):
+
+- **The cheapest model never puts its answer in `.content`** — it lands in
+  `message.reasoning`, so a client reading `.content` gets an empty string, billed, on a
+  successful 200. The starter's `llm.py` does exactly that.
+- **Price does not predict latency.** GLM-5.2 answered in 1.0s; GLM-4.7-Flash took 24.6s
+  and hit its token cap. The cheap end is the *slow* end, and the 20-minute wall is the
+  limit most likely to bind.
+
+So `run.py` defaults to the free agent, and the routing harness stays in the repo,
+switchable, because the measurement is the deliverable.
+
+## The confidence signal is inverted
+
+| confidence | cases | mean score |
+|---|---|---|
+| High | 21 | 0.103 |
+| Medium | 15 | 0.033 |
+| Low | 34 | **0.331** |
+
+The cases it is most sure of are the ones it gets most wrong, by 3.2× — and it survives
+task-type controls. We did not flip the label; that would be an overfit wearing a
+finding's clothes. [`eval/calibration.md`](eval/calibration.md).
 
 ## AI disclosure
 
@@ -132,10 +170,10 @@ Required by §5 of the participant agreement, and accurate.
 | | |
 |---|---|
 | **Coding assistant** | Claude Code (Opus 5), used throughout |
-| **Models called by the agent itself** | none in the scored configurations above |
-| **Written by the assistant** | `agents/rca.py`, `eval/gate.py`, `eval/ablate.py`, `Dockerfile`, `Makefile`, this README |
+| **Models called by the agent itself** | `zai-org/GLM-5.2` via Featherless in `agents/routed.py`; the shipped default calls none, for the measured reason above |
+| **Written by the assistant** | `agents/rca.py`, `agents/routed.py`, `agents/client.py`, `eval/*.py`, `Dockerfile`, `Makefile`, this README, `REPORT.md` |
 | **Written by MantisGrid** | `run.py`, `llm.py`, `cost.py`, `score.py`, `agents/heuristic.py` — the provided starter, used as the baseline we measure against. `score.py` vendors OpenRCA's evaluator (MIT) |
-| **Directed by the team** | the first-mover hypothesis, the decision to ablate it rather than assert it, and the decision to report the negative result |
+| **Directed by the team** | the first-mover hypothesis, the decision to ablate rather than assert, and the decision to ship the configuration the evidence supports instead of the one the brief expects |
 
 The timezone bug, the ablation design, and the gate's held-out-deployment check came out
 of assistant-run measurement against the dev split; the team chose what to build and what
