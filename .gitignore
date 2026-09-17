@@ -1,0 +1,8 @@
+# The bundle is 12 GB and licensed CC BY-NC -- never committed.
+data
+data/
+out/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
