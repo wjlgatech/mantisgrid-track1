@@ -3,7 +3,7 @@ QUERIES ?= $(DATASET)/dev/query_dev.csv
 OUT     ?= out/dev
 PY      ?= python3
 
-.PHONY: help dev score cost check ablate docker clean
+.PHONY: help dev score cost check calib ablate docker clean
 .DEFAULT_GOAL := help
 
 help:
@@ -22,6 +22,9 @@ cost: ## dollars per case and per model, from $(OUT)/usage.jsonl
 
 check: ## THE GATE: is this submission judgeable? (run dev first)
 	$(PY) eval/gate.py --out $(OUT) --queries $(QUERIES)
+
+calib: ## is the confidence word worth anything? -> eval/calibration.md
+	$(PY) eval/calibration.py --out $(OUT) --queries $(QUERIES)
 
 ablate: ## measure each decision separately -> eval/results.md
 	$(PY) eval/ablate.py --dataset $(DATASET)
