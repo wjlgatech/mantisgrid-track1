@@ -65,7 +65,7 @@ Z_MIN = 4.0          # a series must clear this to count as anomalous at all
 # inflation is unambiguous. Metric z and trace z are not the same scale, so this
 # is a gate, not a comparison -- and the threshold is measured (eval/traces.md),
 # not guessed.
-NET_PROMOTE_Z = float(os.environ.get("RCA_NET_Z", "1000"))
+NET_PROMOTE_Z = float(os.environ.get("RCA_NET_Z", "inf"))
 MAX_CANDIDATES = 12  # components carried into the evidence table
 
 MONTHS = {m: i for i, m in enumerate(

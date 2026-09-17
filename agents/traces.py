@@ -12,8 +12,8 @@ service B, A's span covers B's span plus the time on the wire in both directions
 If the network between them degrades, A's duration grows while B's does not, and
 the difference -- which is time nobody's CPU spent -- is the fault.
 
-    parent span (frontend-0)       |---------------------------|
-    child span  (shippingservice-1)     |---------------|
+    parent span (the caller)       |---------------------------|
+    child span  (the callee)            |---------------|
     gap = parent.duration - child.duration  ~= time on the wire
 
 Two design choices here were wrong on the first attempt and are corrected by
@@ -51,7 +51,16 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-ENABLED = os.environ.get("RCA_TRACES", "1") != "0"
+# OFF by default -- measured, not assumed. eval/sweep_traces.py over all 70 cases:
+#   traces off        all 0.199   the 12 network cases 0.111   other 58 0.217   1.1 s/case
+#   always promote    all 0.163   the 12 network cases 0.194   other 58 0.157  16.6 s/case
+#   promote z>=1000   all 0.194   the 12 network cases 0.111   other 58 0.211  20.1 s/case
+# The signal is REAL -- promoting it lifts the network cases by 75% -- and our
+# promotion rule is too blunt to collect it: it also hijacks the 58 cases where
+# the metrics were already right, and the collateral damage exceeds the gain.
+# Kept in the tree because a better promotion rule is the clearest next move,
+# and because "we found the signal and could not yet use it" is the honest state.
+ENABLED = os.environ.get("RCA_TRACES", "0") != "0"
 
 CHUNK = 1_000_000
 Z_MIN = 4.0
