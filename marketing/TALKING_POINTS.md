@@ -1,50 +1,18 @@
 # Talking points — two minutes, start to finish
 
-**60 seconds of slides. 60 seconds of demo.** Words in quotes are the script.
+**60 seconds of demo, then 60 seconds of slides.** Words in quotes are the script.
 
-- Slides → https://wjlgatech.github.io/mantisgrid-track1/marketing/PRESENTATION.html
-- Demo → https://wjlgatech.github.io/mantisgrid-track1/docs/demo/
+1. **Demo** → https://wjlgatech.github.io/mantisgrid-track1/docs/demo/
+2. **Slides** → https://wjlgatech.github.io/mantisgrid-track1/marketing/PRESENTATION.html
 
----
-
-# Part 1 · The presentation — 60 seconds, 3 slides
-
-### Slide 1 · WHAT — 20 seconds
-
-> "When a system breaks, everything downstream breaks too — and the parts nearest the
-> customer scream loudest. So **twelve things are shouting and the loudest one is almost
-> never the cause.**
->
-> We built a machine that reads a whole night of data in **one second** and says when it
-> started, which part caused it, and why. **Two-point-seven times better** than the
-> starting point we were given. Costs nothing to run."
-
-*(the picture is doing the work — let the cascade play)*
-
-### Slide 2 · WHY — 25 seconds
-
-> "Our machine writes down how confident it is. We checked whether that meant anything.
->
-> **It's backwards.** When it says 'I'm confident' it's right one time in ten. When it says
-> **'I'm not sure' — one time in three.** Three times better when it doubts itself.
->
-> That matters because everyone builds the same safety net: *if the machine isn't sure,
-> ask a human.* Here that hands people the **easy** ones and lets the mistakes through.
->
-> The reason: a clean picture means 'nothing's wrong' — **or** 'the fire is in a room I
-> can't see into.' From inside the thermometer those look identical."
-
-### Slide 3 · HOW — 15 seconds
-
-> "For every dial it asks one question: **is this unusual for this machine, tonight?**
-> Then it writes a report where **every number is one it actually measured** — nothing
-> invented, because a made-up detail sends someone chasing nothing at 3am.
->
-> Then a **second AI grades that report.** It gave us three out of five. We published it."
+Open both tabs before you start.
 
 ---
 
-# Part 2 · The demo — 60 seconds, 3 clicks
+# Part 1 · The demo — 60 seconds, 3 clicks
+
+**Lead with this.** A thing running beats a thing described, and it earns you
+the right to the slides afterwards.
 
 Open https://wjlgatech.github.io/mantisgrid-track1/docs/demo/
 
@@ -81,6 +49,49 @@ When the cards land:
 > And that's the only job the AI has here. We tested it as the *decision-maker* twice —
 > it changed **zero of twenty** answers both times. It just agreed with our list. So it
 > doesn't get to decide; it gets to grade."
+
+---
+
+---
+
+# Part 2 · The presentation — 60 seconds, 3 slides
+
+**Now that they have seen it work**, this is what it means.
+
+### Slide 1 · WHAT — 20 seconds
+
+> "When a system breaks, everything downstream breaks too — and the parts nearest the
+> customer scream loudest. So **twelve things are shouting and the loudest one is almost
+> never the cause.**
+>
+> We built a machine that reads a whole night of data in **one second** and says when it
+> started, which part caused it, and why. **Two-point-seven times better** than the
+> starting point we were given. Costs nothing to run."
+
+*(the picture is doing the work — let the cascade play)*
+
+### Slide 2 · WHY — 25 seconds
+
+> "Our machine writes down how confident it is. We checked whether that meant anything.
+>
+> **It's backwards.** When it says 'I'm confident' it's right one time in ten. When it says
+> **'I'm not sure' — one time in three.** Three times better when it doubts itself.
+>
+> That matters because everyone builds the same safety net: *if the machine isn't sure,
+> ask a human.* Here that hands people the **easy** ones and lets the mistakes through.
+>
+> The reason: a clean picture means 'nothing's wrong' — **or** 'the fire is in a room I
+> can't see into.' From inside the thermometer those look identical."
+
+### Slide 3 · HOW — 15 seconds
+
+> "For every dial it asks one question: **is this unusual for this machine, tonight?**
+> Then it writes a report where **every number is one it actually measured** — nothing
+> invented, because a made-up detail sends someone chasing nothing at 3am.
+>
+> Then a **second AI grades that report.** It gave us three out of five. We published it."
+
+---
 
 ---
 
