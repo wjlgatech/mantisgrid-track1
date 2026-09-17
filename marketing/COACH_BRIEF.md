@@ -100,3 +100,87 @@ remaining headroom is.
 Two measured improvements are sitting on the shelf because of it. Unblocking the merge
 rule converts **+75% on network cases** and **96.3% reachability** from findings into
 score.
+
+---
+
+# Appendix — how "0.199" is actually calculated
+
+*Plain version. Every number here was re-derived from the real run, not quoted.*
+
+## It's a marked exam, not a percentage of cases
+
+Each case is one question, worth **1 to 3 points** depending on what it asks for:
+
+| the question asks for | points available |
+|---|---|
+| just the time (`task_1`) | 1 |
+| just the component (`task_3`) | 1 |
+| time + component + reason (`task_7`) | 3 |
+
+You earn a point for each part you get right:
+
+- **time** — within **60 seconds** of the truth
+- **component** — the string matches **exactly** (`shippingservice-1`, not `shippingservice`)
+- **reason** — the string matches exactly, from the 15 allowed labels
+
+**Case score = points earned ÷ points available.** Three real cases from our run:
+
+| case | asks for | available | earned | score |
+|---|---|---|---|---|
+| row 1 | time | 1 | 1 | **1.00** |
+| row 4 | component | 1 | 0 | **0.00** |
+| row 25 | all three | 3 | 2 | **0.67** |
+
+**Run score = the average of all 70 case scores.** That average is **0.1989 → 0.199**.
+
+## The actual arithmetic
+
+```
+70 cases
+164 gradeable points across them
+35 points earned
+mean of the 70 per-case scores = 0.1989
+```
+
+Note it is the **mean of per-case fractions**, not total-points-over-total-points.
+Every case counts equally whether it is worth 1 point or 3. Scoring it the other way
+gives 35/164 = 0.213 — close, but 0.199 is the number the evaluator reports.
+
+## What the distribution looks like
+
+| | |
+|---|---|
+| Cases scoring exactly **0.00** | **44 of 70** |
+| Cases scoring exactly **1.00** | **6 of 70** |
+
+So "0.199" does **not** mean "20% right on every case." It means we get **most cases
+completely wrong** and a handful completely right. That is normal here — published
+state of the art is about one case in nine.
+
+## Two ways to score zero on a case you basically solved
+
+1. **Wrong number of failures.** The question says how many failures are in the
+   window. A different count in your JSON → the whole case scores zero, however good
+   each answer is.
+2. **Keys out of order.** The evaluator reads your answer with a **regex**, not a JSON
+   parser, and wants datetime → component → reason. Reorder them and it matches
+   nothing, silently.
+
+Both are why `make check` exists.
+
+## The other two numbers
+
+**1.3 s/case** — `run.py` stopwatches each case into a `wall_s` column of
+`predictions.csv`. Measured mean **1.34 s**, max **3.24 s**. Twenty judged cases
+therefore project to well under the 20-minute wall.
+
+**$0.00** — the same file records tokens billed per case. Our shipped agent made
+**0 input and 0 output tokens**, because it makes no model calls at all. Zero tokens
+at any price is zero dollars. (The GLM evidence-judge in `webapp/` does cost money —
+$0.0048 a call — but it is not part of the judged run.)
+
+## Reproduce it yourself
+
+```bash
+make dev && make score      # prints "mean score : 0.199"
+```
