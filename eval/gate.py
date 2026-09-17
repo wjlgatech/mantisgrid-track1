@@ -12,6 +12,7 @@ Exit code is non-zero if any check fails, so `make check` gates on it.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -121,6 +122,33 @@ def main() -> None:
           "every evidence file has all four sections the brief asks for"
           + (f" (bad: {bad_sections[:8]})" if bad_sections else ""))
     check(not empty, "no stub evidence files" + (f" ({empty[:8]})" if empty else ""))
+
+    print("\n-- evidence claims must match the configuration that produced them --")
+    # The bug this catches, seen for real: the ranking rule was switched from
+    # onset to peak and the evidence prose kept narrating the old one -- calling a
+    # component "the earliest mover" when an earlier one was in its own table, and
+    # calling a NEGATIVE time delta "downstream". Evidence that contradicts the
+    # data scores zero and is worse than none, so a claim nobody checks is a bug.
+    rank_by = os.environ.get("RCA_RANK", "peak")
+    contradictions = {
+        "peak": ["earliest mover", "Ranked by **first deviation**"],
+        "onset": ["has the largest deviation", "Ranked by **peak deviation**"],
+    }[rank_by]
+    liars, backwards = [], []
+    for r in q.row_id:
+        f = ev_dir / f"{r}.md"
+        if not f.exists():
+            continue
+        text = f.read_text()
+        if any(c in text for c in contradictions):
+            liars.append(int(r))
+        # "-540s ... downstream" -- a negative delta means earlier, not downstream
+        for m in re.finditer(r"(-\d+)s[^.\n]*downstream", text):
+            backwards.append((int(r), m.group(1)))
+    check(not liars, f"no evidence file narrates a ranking rule we are not using "
+          f"(RCA_RANK={rank_by})" + (f" (bad: {liars[:8]})" if liars else ""))
+    check(not backwards, "no evidence file calls an earlier component 'downstream'"
+          + (f" ({backwards[:4]})" if backwards else ""))
 
     print("\n-- the wall clock, which is the limit most likely to bind --")
     if "wall_s" in preds.columns and len(preds):

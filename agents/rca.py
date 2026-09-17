@@ -325,25 +325,51 @@ def pick(a: Analysis) -> list[dict]:
 # -------------------------------------------------------------- the evidence
 
 def _confidence(a: Analysis, answers: list[dict]) -> tuple[str, str]:
-    """A word and a sentence, both derived from measured separation -- not vibes."""
+    """A word and a sentence, both derived from measured separation -- not vibes.
+
+    The separation that matters depends on what we ranked by: magnitude if
+    RANK_BY is peak, onset ordering if it is onset. Saying the wrong one would be
+    a claim the data does not support, which is worse than saying nothing.
+    """
     if not a.findings:
         return "Low", a.note or "No anomalous series were found in the window."
     first = a.findings[0]
     others = [f for f in a.findings if f.component != first.component]
     if not others:
         return "Medium", (f"Only `{first.component}` cleared z>={Z_MIN}, so there was "
-                          "nothing to separate it from.")
-    gap = (others[0].onset - first.onset).total_seconds()
+                          "nothing to separate it from. One candidate is not a "
+                          "diagnosis, it is the absence of an alternative.")
+    rival = others[0]
+    if RANK_BY == "peak":
+        ratio = first.z / rival.z if rival.z else float("inf")
+        earlier = [f for f in others if f.onset < first.onset]
+        if earlier:
+            e = min(earlier, key=lambda f: f.onset)
+            gap = (first.onset - e.onset).total_seconds()
+            return "Low", (
+                f"`{first.component}` deviates {ratio:.1f}x harder than the next "
+                f"candidate (z={first.z:.0f} vs {rival.z:.0f}), which is why it was "
+                f"picked -- but `{e.component}` started moving {gap:.0f}s EARLIER. "
+                "If that ordering is causal rather than sampling noise, the earlier "
+                "component is the better answer and this one is its victim.")
+        if ratio >= 3:
+            return "High", (f"`{first.component}` deviates {ratio:.1f}x harder than "
+                            f"anything else (z={first.z:.0f} vs {rival.z:.0f}) and "
+                            "nothing anomalous started before it.")
+        return "Medium", (f"`{first.component}` leads on magnitude but only by "
+                          f"{ratio:.1f}x (z={first.z:.0f} vs {rival.z:.0f}); "
+                          f"`{rival.component}` is a live alternative.")
+    gap = (rival.onset - first.onset).total_seconds()
     if gap >= 30:
         return "High", (f"`{first.component}` moved {gap:.0f}s before the next "
-                        f"component (`{others[0].component}`), which is clear of the "
-                        "60s tolerance, so the ordering is unlikely to be sampling noise.")
+                        f"component (`{rival.component}`), clear of the 60s "
+                        "tolerance, so the ordering is unlikely to be noise.")
     if gap > 0:
         return "Low", (f"`{first.component}` moved only {gap:.0f}s before "
-                       f"`{others[0].component}`. That is inside the sampling interval, "
-                       "so the ordering may be an artefact: treat these as tied.")
-    return "Low", (f"`{first.component}` and `{others[0].component}` first deviate in "
-                   "the same sample, so first-mover ordering cannot separate them.")
+                       f"`{rival.component}` -- inside the sampling interval, so "
+                       "treat these as tied.")
+    return "Low", (f"`{first.component}` and `{rival.component}` first deviate in the "
+                   "same sample, so onset ordering cannot separate them.")
 
 
 def write_evidence(a: Analysis, answers: list[dict]) -> str:
@@ -364,8 +390,13 @@ def write_evidence(a: Analysis, answers: list[dict]) -> str:
              f"(`metric_container.csv`, `metric_node.csv`).")
     L.append("")
     if a.findings:
-        L.append("Ranked by **first deviation**, not by peak size — in a cascade the "
-                 "loudest component is usually a victim of the earliest one.")
+        if RANK_BY == "peak":
+            L.append("Ranked by **peak deviation** (robust z against the rest of the "
+                     "day). `onset` is the first sample to leave the band — it dates "
+                     "the fault, but it does not order this table.")
+        else:
+            L.append("Ranked by **first deviation** — in a cascade the loudest "
+                     "component is often a victim of the earliest one.")
         L.append("")
         L.append("| onset (UTC+8) | component | KPI | baseline | peak | z |")
         L.append("|---|---|---|---|---|---|")
@@ -373,9 +404,11 @@ def write_evidence(a: Analysis, answers: list[dict]) -> str:
             L.append(f"| {f.onset:%H:%M:%S} | `{f.component}` | `{f.kpi_name}` | "
                      f"{f.baseline:.3g} | {f.peak:.3g} | {f.z:.1f} |")
         first = a.findings[0]
+        lead = ("has the largest deviation" if RANK_BY == "peak"
+                else "is the earliest mover")
         L.append("")
-        L.append(f"`{first.component}` is the earliest mover: `{first.kpi_name}` leaves "
-                 f"its day-long band at {first.onset:%H:%M:%S}, going from a median of "
+        L.append(f"`{first.component}` {lead}: `{first.kpi_name}` leaves its day-long "
+                 f"band at {first.onset:%H:%M:%S}, going from a median of "
                  f"{first.baseline:.3g} to {first.peak:.3g} (z={first.z:.1f}). "
                  f"{first.n_anomalous} of its series went anomalous in this window.")
     else:
@@ -387,11 +420,23 @@ def write_evidence(a: Analysis, answers: list[dict]) -> str:
     chosen = {x["component"] for x in answers}
     ruled = [f for f in a.findings if f.component not in chosen][:4]
     if ruled:
+        picked = a.findings[0]
         for f in ruled:
-            delta = (f.onset - a.findings[0].onset).total_seconds()
-            L.append(f"`{f.component}`: anomalous on `{f.kpi_name}` (z={f.z:.1f}) but "
-                     f"first deviates {delta:+.0f}s relative to the pick — downstream "
-                     "of it in time, so more likely an effect than the cause.")
+            delta = (f.onset - picked.onset).total_seconds()
+            if delta > 0:
+                L.append(f"`{f.component}`: anomalous on `{f.kpi_name}` (z={f.z:.0f}) "
+                         f"but started {delta:.0f}s AFTER the pick — consistent with "
+                         "being downstream of it, an effect rather than the cause.")
+            elif delta < 0:
+                L.append(f"`{f.component}`: anomalous on `{f.kpi_name}` (z={f.z:.0f}), "
+                         f"and it started {-delta:.0f}s BEFORE the pick. Not ruled out "
+                         f"on timing — it is ruled out only on magnitude "
+                         f"(z={f.z:.0f} vs {picked.z:.0f}). If the fault is one that "
+                         "shows small in metrics, this is the better answer.")
+            else:
+                L.append(f"`{f.component}`: anomalous on `{f.kpi_name}` (z={f.z:.0f}) "
+                         "and first deviates in the SAME sample as the pick. Timing "
+                         "cannot separate these two at this sampling rate.")
     else:
         L.append("Nothing else cleared the threshold, so there was nothing to rule out. "
                  "That is a weaker position than it sounds: with one candidate there is "
