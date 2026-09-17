@@ -23,7 +23,7 @@ Grades are ours. Where we think a judge would mark us lower than we would, we sa
 | Technical Execution | 40% | **A−** | 2.7× the baseline, every claim reproducible by a `make` target; leakage named, not hidden |
 | Innovation / Wow | 30% | **B+** | The gate and the calibration inversion are genuinely novel; a judge skimming may see "no LLM" first |
 | Potential Impact | 20% | **A−** | The inverted-confidence finding transfers to any system that rates its own certainty |
-| Presentation / Demo | 10% | **INCOMPLETE** | Run sheet written, demo **not yet recorded**. This is a real zero until it is. |
+| Presentation / Demo | 10% | **READY** | 10-slide deck + live console; **not yet recorded** — the one thing the repo cannot earn |
 | — | | | |
 | Accuracy (track focus) | — | **C+** | 0.199 vs 0.073 baseline. Real, but far from solved, and held-out will be lower |
 | Evidence & explainability | — | **A** | Every number compiled from measurement; a gate fails the build if the prose contradicts the config |
@@ -125,6 +125,19 @@ a solution to it.
 ## Track focus — evidence and explainability — **A**
 
 Worth more than accuracy in this track, and it is our strongest surface.
+
+**And it is now graded by GLM, not asserted by us.** `webapp/` exposes
+`POST /api/judge`, which sends the evidence file and the answer to
+`zai-org/GLM-5.2` on Featherless and returns four graded dimensions with
+reasoning. Measured on case 0: grounding 4/5, calibration 5/5, ruled-out 4/5,
+**actionability 3/5**, in 15.7s for $0.004833 priced from the usage Featherless
+returned. Its own one-line verdict is in `webapp/README.md` precisely because it
+is not flattering: *"the low confidence undercuts decisiveness for an on-call
+responder."*
+
+That placement is deliberate. Accuracy was never graded by a model — `score.py`
+is OpenRCA's deterministic evaluator. But **evidence quality had no scorer at
+all**; it was our assertion. GLM now supplies one.
 
 - Every evidence file carries the four required sections.
 - **Every number in them is compiled from the measurement that produced it** — carried

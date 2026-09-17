@@ -166,6 +166,27 @@ and we are not claiming it works.**
    were all chosen while looking at all 70 cases.
 6. **`task_6` regressed** in v2.1 (0.250 → 0.083) and we do not know why. Stated, not hidden.
 
+## Where the model does earn its place
+
+Two runs said the model cannot pick a root cause better than a sort. Neither says
+a model is useless here — they say it is useless **at that job**.
+
+The job it is suited to is the one with no deterministic scorer. Accuracy has one
+(OpenRCA's `evaluate`). **Evidence quality does not** — it was our own assertion
+that our evidence was good.
+
+So `webapp/` puts `zai-org/GLM-5.2` exactly there: `POST /api/judge` grades the
+evidence file on grounding, calibration, ruled-out quality and actionability,
+with reasoning. On case 0 — 4/5, 5/5, 4/5, **3/5**, 15.7s, $0.004833.
+
+| Job | Who | Why |
+|---|---|---|
+| Find the fault | deterministic analysis | measured twice: 0 of 20 answers changed, 41% of the wall clock |
+| **Grade the explanation** | **GLM-5.2** | no deterministic scorer exists; this is judgement |
+
+That is the division of labour this project argued its way to, and every row of it
+is a measurement rather than a preference.
+
 ## Reproduce
 
 ```bash

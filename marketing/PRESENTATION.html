@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four minutes — MantisGrid Track 1</title>
+<style>
+:root{
+  --bg:#faf9f5; --card:#fff; --card2:#f0eee6; --ink:#141413; --muted:#5c5b57;
+  --line:#e3e0d6; --line2:#b0aea5; --accent:#d97757; --blue:#6a9bcc; --green:#788c5d;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:6vh 8vw;animation:in .28s ease}
+.slide.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;margin-bottom:.8rem}
+h1{font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.1;margin:0 0 1rem;letter-spacing:-.02em;text-wrap:balance}
+h2{font-size:clamp(1.2rem,2.2vw,1.6rem);margin:0 0 .8rem;font-weight:700}
+p{font-size:clamp(1rem,1.5vw,1.2rem);line-height:1.55;margin:.5rem 0;max-width:52ch;color:var(--muted)}
+p strong,li strong{color:var(--ink)}
+.big{font-family:var(--mono);font-size:clamp(2.4rem,7vw,5rem);font-weight:700;letter-spacing:-.03em;line-height:1}
+.sub{font-size:.9rem;color:var(--muted);margin-top:.3rem}
+table{border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1rem);margin-top:.8rem}
+th,td{border-bottom:1px solid var(--line);padding:.5rem .9rem;text-align:left}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+td.n{font-family:var(--mono)}
+.hi{background:var(--card2)}
+.cards{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+.c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem;min-width:180px}
+.c .k{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.c .v{font-family:var(--mono);font-size:1.7rem;font-weight:700;margin-top:.2rem}
+code{font-family:var(--mono);background:var(--card2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.88em}
+.say{margin-top:1.4rem;padding:.9rem 1.1rem;background:var(--card);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;font-size:.92rem;color:var(--ink);max-width:66ch}
+.say b{color:var(--accent);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:.3rem}
+.do{margin-top:.7rem;font-family:var(--mono);font-size:.82rem;color:var(--green);font-weight:600}
+nav{position:fixed;bottom:16px;right:20px;display:flex;gap:8px;align-items:center;z-index:9}
+nav button{font-family:var(--sans);font-weight:600;font-size:.8rem;padding:6px 12px;border-radius:7px;
+  border:1px solid var(--line2);background:var(--card);color:var(--ink);cursor:pointer}
+#clock{position:fixed;bottom:16px;left:20px;font-family:var(--mono);font-size:.8rem;color:var(--muted);z-index:9}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);transition:width .25s}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<section class="slide on">
+  <div class="eyebrow">MantisGrid Hackathon 2026 · Track 1</div>
+  <h1>Twelve services are screaming.<br>One of them started it.</h1>
+  <p>An agent that reads gigabytes of production telemetry and says <strong>when</strong> a failure began,
+    <strong>which component</strong> caused it, and <strong>why</strong> — unattended, in about a second per case.</p>
+  <div class="say"><b>0:00 — say</b>
+    "Published state of the art on this benchmark solves about one case in nine. So this is an
+    unsolved problem, and most of what I'm going to show you is what we <em>learned</em>, not what we won."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">The result</div>
+  <div class="big">0.073 → 0.199</div>
+  <div class="sub">All 70 dev cases, scored by OpenRCA's own evaluator. 6 fully solved, up from 2.</div>
+  <div class="cards">
+    <div class="c"><div class="k">per case</div><div class="v">1.3s</div></div>
+    <div class="c"><div class="k">cost per case</div><div class="v">$0.00</div></div>
+    <div class="c"><div class="k">20-case run</div><div class="v">1.2 min</div><div class="sub">of a 20-min budget</div></div>
+  </div>
+  <div class="say"><b>0:25 — say</b>
+    "2.7× the baseline. And the single biggest win wasn't a clever idea — it was a <strong>timezone</strong>."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">Demo · live</div>
+  <h2>Solve a case, then read what it wrote</h2>
+  <div class="do">make webapp → click case #0 → Solve</div>
+  <p>Point at three things in the evidence file: the <strong>real values</strong> (baseline, peak, z, onset,
+    each from a named CSV) — then <strong>Ruled out</strong>, where it argues against its own answer.</p>
+  <div class="say"><b>0:50 — say</b>
+    "No model wrote these numbers. Every one is carried from the measurement that produced it,
+    because evidence that isn't in the data scores <em>zero</em> here — worse than none, since at 3am it
+    sends someone chasing nothing. And look: it says <code>node-6</code> started moving 540 seconds
+    <em>earlier</em>, so our own pick is excluded on magnitude alone."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">Demo · live · GLM</div>
+  <h2>Now let GLM grade it</h2>
+  <div class="do">click "Grade the evidence with GLM-5.2"</div>
+  <table>
+    <tr><th>dimension</th><th>GLM-5.2 said</th></tr>
+    <tr><td>Grounding</td><td class="n">4 / 5</td></tr>
+    <tr class="hi"><td>Calibration</td><td class="n">5 / 5</td></tr>
+    <tr><td>Ruled out</td><td class="n">4 / 5</td></tr>
+    <tr class="hi"><td><strong>Actionability</strong></td><td class="n"><strong>3 / 5</strong></td></tr>
+  </table>
+  <p class="sub">15.7 seconds · $0.0048 · priced from the usage Featherless returned</p>
+  <div class="say"><b>1:20 — say</b>
+    "That's a second model judging our work, live. And it marks us <em>down</em> — 'the low confidence
+    undercuts decisiveness for an on-call responder.' We left that in the README."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">The finding we're proudest of</div>
+  <h1>Its confidence runs <em>backwards</em>.</h1>
+  <table>
+    <tr><th>it said</th><th>cases</th><th>actually right</th></tr>
+    <tr><td>High confidence</td><td class="n">21</td><td class="n">0.103</td></tr>
+    <tr><td>Medium</td><td class="n">15</td><td class="n">0.033</td></tr>
+    <tr class="hi"><td><strong>Low confidence</strong></td><td class="n">34</td><td class="n"><strong>0.331</strong></td></tr>
+  </table>
+  <p class="sub">Permutation p = 0.006. Holds inside individual task types.</p>
+  <div class="say"><b>1:50 — say</b>
+    "The standard human-in-the-loop design escalates <em>low</em> confidence to a person. On our agent
+    that would have handed humans the work it already got right, and auto-approved the mistakes.
+    <strong>Backwards, silently, in the expensive direction.</strong>"</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">Why</div>
+  <h2>A blind spot and a clean result are the same reading</h2>
+  <p><strong>High</strong> is awarded for a clean picture — one component clearly worst, nothing moving before it.
+    But a clean picture is <em>also</em> exactly what you see when the fault is invisible to the instrument
+    you're holding.</p>
+  <p>A quarter of the real causes are <strong>network faults</strong>, which live in span latency. We were reading metrics.</p>
+  <div class="say"><b>2:15 — say</b>
+    "A confidence score measured inside one instrument cannot detect the failure
+    <strong>'we are using the wrong instrument.'</strong> That's the transferable line. It's true of a blood test,
+    a survey, and an attribution model."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">Root cause · our own agent</div>
+  <h1>44% of correct answers were <em>unsayable</em>.</h1>
+  <table>
+    <tr><th>level</th><th>share of answers</th><th>could we emit it?</th></tr>
+    <tr class="hi"><td><strong>service</strong> <code>adservice</code></td><td class="n">44%</td><td><strong>No — never</strong></td></tr>
+    <tr><td>node <code>node-5</code></td><td class="n">37%</td><td>yes</td></tr>
+    <tr><td>pod <code>adservice-0</code></td><td class="n">19%</td><td>yes</td></tr>
+  </table>
+  <p class="sub">Ceiling on component accuracy: 56%, before one line of ranking ran.
+    <code>metric_service.csv</code> — 1 MB/day — was never opened.</p>
+  <div class="say"><b>2:40 — say</b>
+    "We spent a day improving a ranking whose answer wasn't on the list half the time.
+    <strong>Decompose before you optimise.</strong> One query — accuracy split by the thing being scored —
+    would have found this in the first hour."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">The eval</div>
+  <h2>Two of our own findings didn't survive our own statistics</h2>
+  <table>
+    <tr><th>claim</th><th>95% CI</th><th></th></tr>
+    <tr><td>timezone fix <span class="n">+0.092</span></td><td class="n">[+0.031, +0.153]</td><td>real</td></tr>
+    <tr class="hi"><td>confidence inversion <span class="n">+0.228</span></td><td class="n">p = 0.006</td><td><strong>real</strong></td></tr>
+    <tr><td>onset timestamps <span class="n">+0.035</span></td><td class="n">[−0.023, +0.095]</td><td>noise — retracted</td></tr>
+    <tr><td>onset ranking <span class="n">−0.033</span></td><td class="n">[−0.085, +0.016]</td><td>noise — retracted</td></tr>
+  </table>
+  <div class="do">make significance</div>
+  <div class="say"><b>3:05 — say</b>
+    "Per-case standard deviation is 0.3; we were chasing 0.03. Two findings we'd already written up
+    as discoveries didn't clear the bar, so we rewrote the report."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">The part we'd keep</div>
+  <h2>A gate that fails the build when the agent's prose contradicts its own config</h2>
+  <div class="do">make check</div>
+  <p>Key order · failure count · blank answers · the 20-minute wall ·
+    <strong>any component name from this bundle hardcoded in <code>agents/</code></strong> (we're judged on a
+    deployment where those names don't exist).</p>
+  <div class="say"><b>3:30 — say</b>
+    "This one was written after a real bug: we changed the ranking rule and the evidence files kept
+    narrating the old one — calling a component 'the earliest mover' while an earlier one sat in its
+    own table. <strong>Structure checks pass a file that lies.</strong>"</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">Close</div>
+  <h1>Three of our four findings are negative.</h1>
+  <p>One is a retraction of our own earlier claim. On a benchmark where the state of the art solves
+    one case in nine, <strong>a team reporting only wins is a team that didn't look.</strong></p>
+  <div class="cards">
+    <div class="c"><div class="k">score</div><div class="v">0.199</div><div class="sub">from 0.073</div></div>
+    <div class="c"><div class="k">judged run cost</div><div class="v">$0.00</div></div>
+    <div class="c"><div class="k">GLM's grade of us</div><div class="v">4 / 5</div></div>
+  </div>
+  <div class="say"><b>3:50 — say</b>
+    "Those are the findings we'd want in the room at 3am, when something is actually broken."</div>
+</section>
+
+<nav>
+  <button onclick="go(-1)">←</button>
+  <span id="n" style="font-family:var(--mono);font-size:.8rem;color:var(--muted)"></span>
+  <button onclick="go(1)">→</button>
+  <button onclick="tog()" id="t">start timer</button>
+</nav>
+<div id="clock">4:00 target</div>
+
+<script>
+const S=[...document.querySelectorAll('.slide')];let i=0;
+function show(){S.forEach((s,k)=>s.classList.toggle('on',k===i));
+  document.getElementById('n').textContent=`${i+1}/${S.length}`;
+  document.getElementById('bar').style.width=((i+1)/S.length*100)+'%';}
+function go(d){i=Math.max(0,Math.min(S.length-1,i+d));show()}
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);if(e.key==='Home'){i=0;show()}});
+let t=null,s=0;
+function tog(){const b=document.getElementById('t');
+  if(t){clearInterval(t);t=null;b.textContent='resume'}
+  else{t=setInterval(()=>{s++;const m=Math.floor(s/60),ss=String(s%60).padStart(2,'0');
+    const c=document.getElementById('clock');c.textContent=`${m}:${ss} / 4:00`;
+    c.style.color=s>240?'#d97757':'';},1000);b.textContent='pause'}}
+show();
+</script>
+</body>
+</html>
