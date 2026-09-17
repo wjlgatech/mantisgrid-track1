@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Four minutes — MantisGrid Track 1</title>
+<title>Why did it break? — MantisGrid Track 1</title>
 <style>
 :root{
   --bg:#faf9f5; --card:#fff; --card2:#f0eee6; --ink:#141413; --muted:#5c5b57;
-  --line:#e3e0d6; --line2:#b0aea5; --accent:#d97757; --blue:#6a9bcc; --green:#788c5d;
+  --line:#e3e0d6; --accent:#d97757; --blue:#6a9bcc; --green:#788c5d;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --sans:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
@@ -15,35 +15,34 @@
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
 .slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
-  padding:6vh 8vw;animation:in .28s ease}
+  padding:6vh 9vw;animation:in .3s ease}
 .slide.on{display:flex}
-@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.eyebrow{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
-  font-weight:700;margin-bottom:.8rem}
-h1{font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.1;margin:0 0 1rem;letter-spacing:-.02em;text-wrap:balance}
-h2{font-size:clamp(1.2rem,2.2vw,1.6rem);margin:0 0 .8rem;font-weight:700}
-p{font-size:clamp(1rem,1.5vw,1.2rem);line-height:1.55;margin:.5rem 0;max-width:52ch;color:var(--muted)}
-p strong,li strong{color:var(--ink)}
-.big{font-family:var(--mono);font-size:clamp(2.4rem,7vw,5rem);font-weight:700;letter-spacing:-.03em;line-height:1}
-.sub{font-size:.9rem;color:var(--muted);margin-top:.3rem}
-table{border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1rem);margin-top:.8rem}
-th,td{border-bottom:1px solid var(--line);padding:.5rem .9rem;text-align:left}
-th{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
-td.n{font-family:var(--mono)}
-.hi{background:var(--card2)}
-.cards{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem}
-.c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem;min-width:180px}
-.c .k{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.c .v{font-family:var(--mono);font-size:1.7rem;font-weight:700;margin-top:.2rem}
-code{font-family:var(--mono);background:var(--card2);border:1px solid var(--line);
-  border-radius:5px;padding:1px 6px;font-size:.88em}
-.say{margin-top:1.4rem;padding:.9rem 1.1rem;background:var(--card);border-left:3px solid var(--accent);
-  border-radius:0 8px 8px 0;font-size:.92rem;color:var(--ink);max-width:66ch}
-.say b{color:var(--accent);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:.3rem}
-.do{margin-top:.7rem;font-family:var(--mono);font-size:.82rem;color:var(--green);font-weight:600}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;margin-bottom:1rem}
+h1{font-size:clamp(2rem,4.8vw,3.4rem);line-height:1.1;margin:0 0 1.2rem;letter-spacing:-.02em;text-wrap:balance}
+h2{font-size:clamp(1.3rem,2.6vw,1.9rem);margin:0 0 .9rem;line-height:1.2}
+p{font-size:clamp(1.05rem,1.7vw,1.35rem);line-height:1.6;margin:.6rem 0;max-width:46ch;color:var(--ink)}
+p.q{color:var(--muted)}
+.big{font-family:var(--mono);font-size:clamp(2.6rem,8vw,5.5rem);font-weight:700;letter-spacing:-.03em;line-height:1}
+.sub{font-size:1rem;color:var(--muted);margin-top:.5rem;max-width:48ch}
+.three{display:flex;gap:2.2rem;flex-wrap:wrap;margin:1.2rem 0}
+.three div{font-size:clamp(1.1rem,2vw,1.5rem);font-weight:700}
+.three span{display:block;font-size:.8rem;color:var(--muted);font-weight:400;margin-top:.2rem}
+table{border-collapse:collapse;font-size:clamp(.88rem,1.4vw,1.1rem);margin-top:.6rem}
+th,td{border-bottom:1px solid var(--line);padding:.55rem 1rem;text-align:left}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+td.n{font-family:var(--mono);font-weight:700}
+tr.hi{background:var(--card2)}
+.map td:first-child{color:var(--ink);font-weight:600}
+.map td:last-child{color:var(--muted);font-family:var(--mono);font-size:.92em}
+.say{margin-top:1.5rem;padding:.9rem 1.2rem;background:var(--card);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;font-size:.95rem;max-width:62ch}
+.say b{color:var(--accent);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:.3rem}
+.do{font-family:var(--mono);font-size:.9rem;color:var(--green);font-weight:700;margin:.6rem 0}
 nav{position:fixed;bottom:16px;right:20px;display:flex;gap:8px;align-items:center;z-index:9}
 nav button{font-family:var(--sans);font-weight:600;font-size:.8rem;padding:6px 12px;border-radius:7px;
-  border:1px solid var(--line2);background:var(--card);color:var(--ink);cursor:pointer}
+  border:1px solid #b0aea5;background:var(--card);cursor:pointer}
 #clock{position:fixed;bottom:16px;left:20px;font-family:var(--mono);font-size:.8rem;color:var(--muted);z-index:9}
 #bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);transition:width .25s}
 </style>
@@ -51,146 +50,275 @@ nav button{font-family:var(--sans);font-weight:600;font-size:.8rem;padding:6px 1
 <body>
 <div id="bar"></div>
 
+<!-- 1 -->
 <section class="slide on">
-  <div class="eyebrow">MantisGrid Hackathon 2026 · Track 1</div>
-  <h1>Twelve services are screaming.<br>One of them started it.</h1>
-  <p>An agent that reads gigabytes of production telemetry and says <strong>when</strong> a failure began,
-    <strong>which component</strong> caused it, and <strong>why</strong> — unattended, in about a second per case.</p>
-  <div class="say"><b>0:00 — say</b>
-    "Published state of the art on this benchmark solves about one case in nine. So this is an
-    unsolved problem, and most of what I'm going to show you is what we <em>learned</em>, not what we won."</div>
+  <div class="eyebrow">MantisGrid 2026 · Track 1</div>
+  <h1>A restaurant is running thirty minutes late.</h1>
+  <p>Somebody hands you a box. Inside is <strong>everything that happened that night</strong> —
+  every temperature reading from every stove, every cook's notes, every order slip.</p>
+  <p>Enough paper to fill a room. For <strong>half an hour</strong> of one bad evening.</p>
+  <div class="say"><b>say</b>
+    "No computers in this story yet. Just a box of paper and a manager who wants answers."</div>
 </section>
 
+<!-- 2 -->
 <section class="slide">
-  <div class="eyebrow">The result</div>
-  <div class="big">0.073 → 0.199</div>
-  <div class="sub">All 70 dev cases, scored by OpenRCA's own evaluator. 6 fully solved, up from 2.</div>
-  <div class="cards">
-    <div class="c"><div class="k">per case</div><div class="v">1.3s</div></div>
-    <div class="c"><div class="k">cost per case</div><div class="v">$0.00</div></div>
-    <div class="c"><div class="k">20-case run</div><div class="v">1.2 min</div><div class="sub">of a 20-min budget</div></div>
+  <div class="eyebrow">The job</div>
+  <h1>Three questions.</h1>
+  <div class="three">
+    <div>When did it start?<span>not when you noticed — when it began</span></div>
+    <div>Which station?<span>which one actually caused it</span></div>
+    <div>Why?<span>what went wrong there</span></div>
   </div>
-  <div class="say"><b>0:25 — say</b>
-    "2.7× the baseline. And the single biggest win wasn't a clever idea — it was a <strong>timezone</strong>."</div>
+  <p>And here is the trap. When one station jams, <strong>every station after it jams too.</strong>
+  The ones closest to the customer complain the loudest.</p>
+  <p><strong>The loudest complaint is almost never the one that started it.</strong></p>
+  <div class="say"><b>say</b>
+    "Twelve stations are shouting. One of them caused it. That's the whole problem."</div>
 </section>
 
+<!-- 3 -->
 <section class="slide">
-  <div class="eyebrow">Demo · live</div>
-  <h2>Solve a case, then read what it wrote</h2>
-  <div class="do">make webapp → click case #0 → Solve</div>
-  <p>Point at three things in the evidence file: the <strong>real values</strong> (baseline, peak, z, onset,
-    each from a named CSV) — then <strong>Ruled out</strong>, where it argues against its own answer.</p>
-  <div class="say"><b>0:50 — say</b>
-    "No model wrote these numbers. Every one is carried from the measurement that produced it,
-    because evidence that isn't in the data scores <em>zero</em> here — worse than none, since at 3am it
-    sends someone chasing nothing. And look: it says <code>node-6</code> started moving 540 seconds
-    <em>earlier</em>, so our own pick is excluded on magnitude alone."</div>
+  <div class="eyebrow">What we built</div>
+  <h1>A machine that reads the whole box in one second.</h1>
+  <p>For every stove, it asks one question: <strong>"Did this run hotter tonight than it
+  normally does?"</strong> Then it ranks them.</p>
+  <p>It writes its answer down like a report — with the actual numbers it saw, and the
+  other stoves it considered and dropped.</p>
+  <div class="big">0.073 → 0.199</div>
+  <div class="sub">2.7× better than the starting point we were given. One second per case. Costs nothing.</div>
+  <div class="say"><b>say</b>
+    "For scale: the best published attempt at this problem gets about one case in nine.
+    This is not a solved problem, and most of what I'll show you is what we learned."</div>
 </section>
 
+<!-- 4 -->
 <section class="slide">
-  <div class="eyebrow">Demo · live · GLM</div>
-  <h2>Now let GLM grade it</h2>
-  <div class="do">click "Grade the evidence with GLM-5.2"</div>
+  <div class="eyebrow">Win #1</div>
+  <h1>The biggest win was a clock.</h1>
+  <p>Every timestamp in the box was written in <strong>Beijing time</strong>.
+  We were reading them as <strong>London time</strong>.</p>
+  <p>Eight hours off. So for anything that happened after 4pm, we were looking past the
+  end of the night — at <strong>nothing at all</strong>.</p>
+  <p>On <strong>24 cases out of 70</strong>, we handed in a blank answer and didn't know it.</p>
+  <p><strong>One line of code fixed it.</strong> It was worth more than every clever idea we had.</p>
+  <div class="say"><b>say</b>
+    "We're opening with our most embarrassing bug on purpose. It was the single largest
+    improvement available, and we'd have missed it if we hadn't checked the basics."</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="eyebrow">Win #2 · live demo</div>
+  <h1>Watch it work.</h1>
+  <div class="do">make webapp → pick a case → Solve</div>
+  <p>Three seconds. Then open what it wrote and look at two things:</p>
+  <p>① <strong>Every number is one it actually measured.</strong> Nothing is made up.<br>
+     ② <strong>It argues against itself.</strong> It says: "this other station started moving
+     nine minutes <em>earlier</em> than my answer — so I might be wrong."</p>
+  <div class="do">→ then click "Grade the evidence"</div>
+  <p>A <strong>second machine reads our report and marks it</strong>. It gave us
+  <strong>3 out of 5</strong> on "would this actually help someone at 3am." <strong>It marked us down.</strong>
+  We left that in.</p>
+  <div class="say"><b>say</b>
+    "A report you can't check is worth nothing. So every number in ours is traceable, and
+    we let something else grade it — and publish the bad grade."</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="eyebrow">Win #3 — the one we're proudest of</div>
+  <h1>When our machine is <em>sure</em>, it's usually <em>wrong</em>.</h1>
   <table>
-    <tr><th>dimension</th><th>GLM-5.2 said</th></tr>
-    <tr><td>Grounding</td><td class="n">4 / 5</td></tr>
-    <tr class="hi"><td>Calibration</td><td class="n">5 / 5</td></tr>
-    <tr><td>Ruled out</td><td class="n">4 / 5</td></tr>
-    <tr class="hi"><td><strong>Actionability</strong></td><td class="n"><strong>3 / 5</strong></td></tr>
+    <tr><th>it told us</th><th>how often it was right</th></tr>
+    <tr><td>"I'm confident"</td><td class="n">1 time in 10</td></tr>
+    <tr class="hi"><td><strong>"I'm not sure"</strong></td><td class="n"><strong>1 time in 3</strong></td></tr>
   </table>
-  <p class="sub">15.7 seconds · $0.0048 · priced from the usage Featherless returned</p>
-  <div class="say"><b>1:20 — say</b>
-    "That's a second model judging our work, live. And it marks us <em>down</em> — 'the low confidence
-    undercuts decisiveness for an on-call responder.' We left that in the README."</div>
+  <p class="sub">Three times better when it doubts itself. We checked — this isn't luck.</p>
+  <p>Normally you'd say: <em>"when the machine isn't sure, ask a human."</em>
+  <strong>That would have been exactly backwards.</strong> Humans would get the easy ones,
+  and the mistakes would sail through.</p>
+  <div class="say"><b>say</b>
+    "This is the finding we'd take to any other project. It's not about restaurants."</div>
 </section>
 
+<!-- 7 -->
 <section class="slide">
-  <div class="eyebrow">The finding we're proudest of</div>
-  <h1>Its confidence runs <em>backwards</em>.</h1>
+  <div class="eyebrow">Why it happens</div>
+  <h1>A tidy picture means two different things.</h1>
+  <p>Our machine says <strong>"I'm confident"</strong> when the picture is clean — one stove clearly
+  hottest, nothing else moving.</p>
+  <p>But a clean picture also happens when <strong>the fire is somewhere a thermometer can't
+  reach.</strong></p>
+  <p><strong>From inside the thermometer, those two look identical.</strong></p>
+  <p class="sub">A quarter of the real problems here were never going to show up on a
+  thermometer at all. They were on the order slips, and we were reading thermometers.</p>
+  <div class="say"><b>say</b>
+    "A doctor reading only a blood test can be completely certain and completely wrong,
+    and the blood test will never warn them. Only an X-ray will."</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="eyebrow">What we tried that didn't work</div>
+  <h1>We asked an AI to pick the answer. Twice. It just agreed with us.</h1>
   <table>
-    <tr><th>it said</th><th>cases</th><th>actually right</th></tr>
-    <tr><td>High confidence</td><td class="n">21</td><td class="n">0.103</td></tr>
-    <tr><td>Medium</td><td class="n">15</td><td class="n">0.033</td></tr>
-    <tr class="hi"><td><strong>Low confidence</strong></td><td class="n">34</td><td class="n"><strong>0.331</strong></td></tr>
+    <tr><th>we gave the AI</th><th>answers it changed</th></tr>
+    <tr><td>our ranked list of suspects</td><td class="n">0 out of 20</td></tr>
+    <tr class="hi"><td>a much better list</td><td class="n"><strong>0 out of 20</strong></td></tr>
   </table>
-  <p class="sub">Permutation p = 0.006. Holds inside individual task types.</p>
-  <div class="say"><b>1:50 — say</b>
-    "The standard human-in-the-loop design escalates <em>low</em> confidence to a person. On our agent
-    that would have handed humans the work it already got right, and auto-approved the mistakes.
-    <strong>Backwards, silently, in the expensive direction.</strong>"</div>
+  <p>Hand it a list that's already sorted and it takes the top one and explains why.
+  It wasn't thinking — it was <strong>agreeing</strong>.</p>
+  <p>So we don't use it to pick. <strong>We use it to grade our homework</strong> — the one job
+  where no simple rule can do the checking.</p>
+  <div class="say"><b>say</b>
+    "It cost eight minutes of a twenty-minute budget to agree with us. So we stopped."</div>
 </section>
 
+<!-- 9 -->
 <section class="slide">
-  <div class="eyebrow">Why</div>
-  <h2>A blind spot and a clean result are the same reading</h2>
-  <p><strong>High</strong> is awarded for a clean picture — one component clearly worst, nothing moving before it.
-    But a clean picture is <em>also</em> exactly what you see when the fault is invisible to the instrument
-    you're holding.</p>
-  <p>A quarter of the real causes are <strong>network faults</strong>, which live in span latency. We were reading metrics.</p>
-  <div class="say"><b>2:15 — say</b>
-    "A confidence score measured inside one instrument cannot detect the failure
-    <strong>'we are using the wrong instrument.'</strong> That's the transferable line. It's true of a blood test,
-    a survey, and an attribution model."</div>
+  <div class="eyebrow">Being honest</div>
+  <h1>Two things we thought we'd discovered turned out to be luck.</h1>
+  <p>We only had <strong>70 cases</strong>. With that few, a small improvement and a lucky streak
+  look the same.</p>
+  <p>So we did the maths properly. Two of our own findings came back as <strong>"could easily be
+  chance."</strong> We took them back out of the report.</p>
+  <p>We'll also tell you: <strong>a third of our score</strong> depends on a list of keywords we wrote
+  by hand. If the next system names things differently, that third gets worse. We're saying
+  it rather than letting you find it.</p>
+  <div class="say"><b>say</b>
+    "We'd rather show you the retraction than have you wonder what we didn't check."</div>
 </section>
 
+<!-- 10 -->
 <section class="slide">
-  <div class="eyebrow">Root cause · our own agent</div>
-  <h1>44% of correct answers were <em>unsayable</em>.</h1>
-  <table>
-    <tr><th>level</th><th>share of answers</th><th>could we emit it?</th></tr>
-    <tr class="hi"><td><strong>service</strong> <code>adservice</code></td><td class="n">44%</td><td><strong>No — never</strong></td></tr>
-    <tr><td>node <code>node-5</code></td><td class="n">37%</td><td>yes</td></tr>
-    <tr><td>pod <code>adservice-0</code></td><td class="n">19%</td><td>yes</td></tr>
+  <div class="eyebrow">The map — story to real thing</div>
+  <h2>Everything I just said, in the real words</h2>
+  <table class="map">
+    <tr><th>in the story</th><th>what it really is</th></tr>
+    <tr><td>One stove</td><td>a container (one copy of one service)</td></tr>
+    <tr><td>The building's gas main</td><td>a node (the machine they share)</td></tr>
+    <tr><td>A whole station</td><td>a service</td></tr>
+    <tr><td>Temperature readings</td><td>metrics — CPU, memory, disk</td></tr>
+    <tr><td>An order slip, stamped at each station</td><td>a trace — spans with timings</td></tr>
+    <tr class="hi"><td><strong>First wisp of smoke</strong></td><td><strong>onset — how we date it</strong></td></tr>
+    <tr class="hi"><td><strong>The fire alarm</strong></td><td><strong>peak — how we pick it</strong></td></tr>
+    <tr><td>"Hotter than it normally runs"</td><td>robust z-score vs the rest of that day</td></tr>
+    <tr><td>The written report</td><td>the evidence file</td></tr>
+    <tr><td>The second machine that grades it</td><td>GLM-5.2, as judge</td></tr>
   </table>
-  <p class="sub">Ceiling on component accuracy: 56%, before one line of ranking ran.
-    <code>metric_service.csv</code> — 1 MB/day — was never opened.</p>
-  <div class="say"><b>2:40 — say</b>
-    "We spent a day improving a ranking whose answer wasn't on the list half the time.
-    <strong>Decompose before you optimise.</strong> One query — accuracy split by the thing being scored —
-    would have found this in the first hour."</div>
+  <div class="say"><b>say</b>
+    "Smoke tells you <em>when</em>. The alarm tells you <em>which</em>. Those are different
+    questions and we answer them with different signals — that's the core design."</div>
 </section>
 
-<section class="slide">
-  <div class="eyebrow">The eval</div>
-  <h2>Two of our own findings didn't survive our own statistics</h2>
-  <table>
-    <tr><th>claim</th><th>95% CI</th><th></th></tr>
-    <tr><td>timezone fix <span class="n">+0.092</span></td><td class="n">[+0.031, +0.153]</td><td>real</td></tr>
-    <tr class="hi"><td>confidence inversion <span class="n">+0.228</span></td><td class="n">p = 0.006</td><td><strong>real</strong></td></tr>
-    <tr><td>onset timestamps <span class="n">+0.035</span></td><td class="n">[−0.023, +0.095]</td><td>noise — retracted</td></tr>
-    <tr><td>onset ranking <span class="n">−0.033</span></td><td class="n">[−0.085, +0.016]</td><td>noise — retracted</td></tr>
-  </table>
-  <div class="do">make significance</div>
-  <div class="say"><b>3:05 — say</b>
-    "Per-case standard deviation is 0.3; we were chasing 0.03. Two findings we'd already written up
-    as discoveries didn't clear the bar, so we rewrote the report."</div>
-</section>
-
-<section class="slide">
-  <div class="eyebrow">The part we'd keep</div>
-  <h2>A gate that fails the build when the agent's prose contradicts its own config</h2>
-  <div class="do">make check</div>
-  <p>Key order · failure count · blank answers · the 20-minute wall ·
-    <strong>any component name from this bundle hardcoded in <code>agents/</code></strong> (we're judged on a
-    deployment where those names don't exist).</p>
-  <div class="say"><b>3:30 — say</b>
-    "This one was written after a real bug: we changed the ranking rule and the evidence files kept
-    narrating the old one — calling a component 'the earliest mover' while an earlier one sat in its
-    own table. <strong>Structure checks pass a file that lies.</strong>"</div>
-</section>
-
+<!-- 11 -->
 <section class="slide">
   <div class="eyebrow">Close</div>
   <h1>Three of our four findings are negative.</h1>
-  <p>One is a retraction of our own earlier claim. On a benchmark where the state of the art solves
-    one case in nine, <strong>a team reporting only wins is a team that didn't look.</strong></p>
-  <div class="cards">
-    <div class="c"><div class="k">score</div><div class="v">0.199</div><div class="sub">from 0.073</div></div>
-    <div class="c"><div class="k">judged run cost</div><div class="v">$0.00</div></div>
-    <div class="c"><div class="k">GLM's grade of us</div><div class="v">4 / 5</div></div>
+  <p>One is us taking back our own claim.</p>
+  <p>On a problem where the best published attempt solves one case in nine,
+  <strong>a team that only reports wins is a team that didn't look.</strong></p>
+  <div class="three" style="margin-top:1.4rem">
+    <div>0.199<span>from 0.073</span></div>
+    <div>1 second<span>per case</span></div>
+    <div>$0.00<span>to run</span></div>
   </div>
-  <div class="say"><b>3:50 — say</b>
-    "Those are the findings we'd want in the room at 3am, when something is actually broken."</div>
+  <div class="say"><b>say</b>
+    "These are the findings we'd want in the room at 3am, when something is actually broken."</div>
+</section>
+
+<!-- 12 — Q&A backup -->
+<section class="slide">
+  <div class="eyebrow">Backup · if they ask</div>
+  <h2>The three questions, answered in the story</h2>
+  <p class="q"><strong>"Why is there no AI in the judged run? This is the AI track."</strong><br>
+  We hired the chef twice and both times he read our shortlist and said "yes, the first one."
+  Zero of twenty changed. He wasn't short of information — the second time our shortlist held
+  the right answer 96% of the time and he still just agreed. He anchors on the order we hand
+  him. <span style="color:var(--muted)">(GLM-5.2, reasoning on, 0/20 twice; harness in the repo,
+  <code>make compare</code>.)</span></p>
+
+  <p class="q"><strong>"So where does the AI earn its place?"</strong><br>
+  Grading the report. Whether a stove was hot is arithmetic — no opinion needed. Whether a
+  <em>write-up</em> is any good is judgement, and nothing simple can check that. So that's the
+  one job it has. <span style="color:var(--muted)">(Accuracy has a deterministic scorer;
+  evidence quality had none.)</span></p>
+
+  <p class="q"><strong>"Will it work on a restaurant you've never seen?"</strong><br>
+  Two thirds of it will — "was this stove hotter than usual <em>tonight</em>" needs no prior
+  knowledge of that kitchen. One third won't travel as well: the part that turns "hot stove"
+  into "why" is a keyword list we wrote by hand.
+  <span style="color:var(--muted)">(Component and time come from a per-case statistic;
+  reason comes from a 19-entry map. Constants were tuned on all 70 — that's leakage, stated.)</span></p>
+</section>
+
+<!-- 13 — appendix: FAQ -->
+<section class="slide">
+  <div class="eyebrow">Appendix A · questions we get asked</div>
+  <h2>FAQ</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:.4rem">
+    <div>
+      <p style="font-size:1rem"><strong>"Is one second per case realistic?"</strong><br>
+      <span style="color:var(--muted);font-size:.92rem">Yes — it reads only the half-hour that
+      matters, not the whole night. 20 cases finish in 1.2 minutes of a 20-minute budget.</span></p>
+
+      <p style="font-size:1rem"><strong>"How do you know the report isn't made up?"</strong><br>
+      <span style="color:var(--muted);font-size:.92rem">Every number is carried straight from the
+      measurement that produced it. No model is ever asked to remember a number.</span></p>
+
+      <p style="font-size:1rem"><strong>"Why is it right only 1 in 5 times?"</strong><br>
+      <span style="color:var(--muted);font-size:.92rem">The best published attempt manages 1 in 9.
+      Nobody has solved this. We're 2.7× better than where we started.</span></p>
+    </div>
+    <div>
+      <p style="font-size:1rem"><strong>"Where's the AI, in an AI competition?"</strong><br>
+      <span style="color:var(--muted);font-size:.92rem">We tested it as the decision-maker twice.
+      It changed 0 of 20 answers both times — it just agreed with our list. So it grades our report
+      instead, which is the job no simple rule can do.</span></p>
+
+      <p style="font-size:1rem"><strong>"Will it work somewhere new?"</strong><br>
+      <span style="color:var(--muted);font-size:.92rem">Two thirds will — "hotter than usual
+      tonight" needs no prior knowledge. One third is a hand-written keyword list that may not
+      travel. We're saying so.</span></p>
+
+      <p style="font-size:1rem"><strong>"What's the catch?"</strong><br>
+      <span style="color:var(--muted);font-size:.92rem">We tuned it while looking at all 70
+      practice cases. On unseen ones it will score lower. That's stated in the report.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 14 — appendix: next -->
+<section class="slide">
+  <div class="eyebrow">Appendix B · with more time</div>
+  <h2>What we'd build next</h2>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:1.6rem;align-items:center;margin-top:.4rem">
+    <div>
+      <img src="../webapp/static/bottleneck.png" alt="where the accuracy is stuck"
+        style="width:100%;border:1px solid var(--line);border-radius:10px">
+    </div>
+    <div>
+      <p style="font-size:1rem"><strong>1. Read the order slips.</strong><br>
+      <span style="color:var(--muted);font-size:.93rem">A quarter of the problems never show on a
+      thermometer — they're on the slips. We built that reader and it found them
+      <strong>75% better</strong>. But it also shouted over the thermometers on every other case,
+      so we switched it off. We need a referee that decides <em>which one gets to speak</em>.</span></p>
+
+      <p style="font-size:1rem"><strong>2. Pick from the shortlist properly.</strong><br>
+      <span style="color:var(--muted);font-size:.93rem">The right answer is in our top three
+      <strong>39%</strong> of the time, and we pick the wrong one of the three. Fixing just that
+      would more than double this number.</span></p>
+
+      <p style="font-size:1rem"><strong>3. Let the AI name the <em>why</em>.</strong><br>
+      <span style="color:var(--muted);font-size:.93rem">It's a 15-way multiple choice with the
+      options printed on the page. Unlike our shortlist, there's no order for it to copy — which is
+      exactly why we think it would help there. <strong>Ten lines. Untested.</strong></span></p>
+    </div>
+  </div>
+  <div class="say"><b>say</b>
+    "All three are things we found and couldn't finish, not things we haven't thought about.
+    The first one is already written and switched off on purpose."</div>
 </section>
 
 <nav>
@@ -205,16 +333,16 @@ nav button{font-family:var(--sans);font-weight:600;font-size:.8rem;padding:6px 1
 const S=[...document.querySelectorAll('.slide')];let i=0;
 function show(){S.forEach((s,k)=>s.classList.toggle('on',k===i));
   document.getElementById('n').textContent=`${i+1}/${S.length}`;
-  document.getElementById('bar').style.width=((i+1)/S.length*100)+'%';}
+  document.getElementById('bar').style.width=((i+1)/S.length*100)+'%'}
 function go(d){i=Math.max(0,Math.min(S.length-1,i+d));show()}
 addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);
   if(e.key==='ArrowLeft')go(-1);if(e.key==='Home'){i=0;show()}});
 let t=null,s=0;
 function tog(){const b=document.getElementById('t');
   if(t){clearInterval(t);t=null;b.textContent='resume'}
-  else{t=setInterval(()=>{s++;const m=Math.floor(s/60),ss=String(s%60).padStart(2,'0');
-    const c=document.getElementById('clock');c.textContent=`${m}:${ss} / 4:00`;
-    c.style.color=s>240?'#d97757':'';},1000);b.textContent='pause'}}
+  else{t=setInterval(()=>{s++;const c=document.getElementById('clock');
+    c.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} / 4:00`;
+    c.style.color=s>240?'#d97757':''},1000);b.textContent='pause'}}
 show();
 </script>
 </body>

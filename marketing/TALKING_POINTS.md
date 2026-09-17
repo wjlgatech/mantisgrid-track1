@@ -1,175 +1,221 @@
-# Talking points — one story, mapped to every technical term
+# Talking points
 
-**Rule for this whole talk: never say a technical word before the plain idea it stands
-for.** Say the kitchen thing, then name the real thing in the same breath. One domain,
-start to finish — we never leave the restaurant.
+**One rule: never say a technical word before the everyday word for it.**
+Tell the kitchen story. Then, once, show the map. That's it.
 
 ---
 
-## The story (say this first, ~40 seconds)
+## 1. The story — no technical words at all
 
-> A restaurant is failing. Orders that should take ten minutes are taking thirty.
-> Customers are complaining at the front.
+> A restaurant is running **thirty minutes late**. Customers are complaining at the front.
 >
-> The manager hands you a box. Inside: every thermometer reading from every stove that
-> evening, every line cook's notebook, and every order ticket — each one stamped at each
-> station it passed through. Several gigabytes of paper for **thirty minutes** of one bad
-> night.
+> Someone hands you a box. Inside is **everything that happened that night**: every
+> temperature reading from every stove, every cook's notes, and every order slip — each
+> one stamped at each station it passed through.
 >
-> Three questions. **When** did it start going wrong? **Which station** caused it?
+> Enough paper to fill a room. For **half an hour** of one bad evening.
+>
+> The manager wants three things. **When** did it start? **Which station** caused it?
 > **Why?**
+
+Then the trap, which is the whole problem:
+
+> When one station jams, **every station after it jams too.** And the ones closest to the
+> customer complain loudest.
 >
-> Here's what makes it hard. When one station jams, every station downstream jams too —
-> and the ones nearest the customer complain loudest. Twelve stations are screaming.
-> **The loudest complaint is almost never the culprit.**
+> **Twelve stations are shouting. One of them started it. The loudest one is almost never
+> the culprit.**
 
-Then land the stakes: *"The best published attempt at this solves about one case in
-nine. So this is genuinely unsolved — and most of what I'll show you is what we
-learned, not what we won."*
+Stop there. Don't explain anything yet. Let that sit.
 
 ---
 
-## The map — every piece of the story, and exactly what it is
+## 2. What we built — still no technical words
 
-| In the kitchen | In the system | Where it lives |
-|---|---|---|
-| One stove | A **container** — one replica of one service | `metric_container.csv`, 265 MB/day |
-| The building's gas main | A **node** — the host several containers share | `metric_node.csv`, 21 MB/day |
-| A whole station (all its stoves) | A **service** | `metric_service.csv`, **1 MB/day** |
-| Thermometer readings, taken every minute | **Metrics** — CPU, memory, disk I/O | the three files above |
-| An order ticket stamped at each station | A **trace** — parent and child spans with durations | `trace_span.csv`, 1.3 GB/day |
-| Time between two stamps on one ticket | **Span latency** — time on the wire | the gap we compute |
-| "This stove ran way hotter than it does all night" | **Robust z-score** — median + MAD vs the rest of that day | `rca.analyse()` |
-| The first wisp of smoke | **Onset** — first sample to leave the band | how we date the fault |
-| The fire alarm going off | **Peak** — the largest deviation | how we pick the culprit |
-| The manager's three questions | `datetime` / `component` / `reason` | what the evaluator grades |
-| "Which of these 15 things went wrong" | The **reason label set**, published in the brief | 15 fixed strings |
-| A new head chef reading your report at 3am | The **evidence file** | `evidence/<row_id>.md` |
-| A second inspector grading your report | **GLM-5.2 as judge** | `POST /api/judge` |
+> We built a machine that reads the whole box **in one second**.
+>
+> For every stove it asks one question: *"Did this run hotter tonight than it normally
+> does?"* Then it ranks them, and writes a short report — with the actual numbers it saw,
+> and the stoves it considered and dropped.
 
-**No orphans.** Every row has both halves. If you find yourself saying a technical word
-that isn't in the right column, stop and say the left column instead.
+**2.7× better than the starting point. One second a case. Costs nothing to run.**
+
+> For scale: the best published attempt at this problem gets it right about **one case in
+> nine**. This isn't solved. So most of what I'll show you is what we *learned*.
 
 ---
 
-## The four beats
+## 3. The four things worth telling
 
-### Beat 1 — "We got 2.7× better, and the biggest win was embarrassing" (0:00–1:00)
+### "Our biggest win was a clock."
 
-**Say:** *"We went from 0.073 to 0.199. And the single biggest gain wasn't a clever
-idea — it was a clock."*
+> Every timestamp in the box was written in **Beijing time**. We were reading them as
+> **London time**. Eight hours off.
+>
+> So for anything after 4pm, we were looking past the end of the night — at **nothing**.
+> On **24 cases out of 70** we handed in a blank answer and didn't know it.
+>
+> One line of code. Worth more than every clever idea we had.
 
-> The kitchen's thermometers were stamped in **Beijing time**. We were reading them in
-> **London time**. Eight hours off. For any incident after 4pm we were looking past the
-> end of the night's records and finding **nothing at all** — so on 24 of 70 cases we
-> handed in a **blank answer**.
+### "Watch it work." *(the live bit)*
 
-**Technical:** the telemetry is UTC+8; the starter parses the window as UTC. Any window
-at 16:00 or later falls past the end of the day file. One line. **+0.092, the largest
-single gain available, and it's a bug fix.**
+Solve a case. Three seconds. Then open the report and point at two things:
 
-### Beat 2 — the live demo (1:00–2:00)
+> ① **Every number here is one it actually measured.** Nothing invented.
+> ② **It argues against itself** — "this other station started moving nine minutes
+> *earlier* than my answer, so I might be wrong."
 
-**Do:** `make webapp` → pick a case → **Solve** → **Grade with GLM-5.2**
+Then click **Grade**:
 
-**Say while it runs:** *"Three seconds. No AI model at all. Zero dollars."*
+> A second machine reads our report and marks it. It gave us **3 out of 5** on *"would
+> this actually help someone at 3am."* **It marked us down. We published that.**
 
-Then open the evidence file and point at three things:
+### "When our machine is sure, it's usually wrong."
 
-1. **"Every number here is one we measured."** *(Technical: values are carried in a
-   `Finding` dataclass from the computation that produced them and formatted directly —
-   no model is ever asked to recall a number. Evidence not in the data scores **zero**
-   in this competition, which is worse than none, because at 3am it sends someone
-   chasing nothing.)*
-2. **"Ruled out — and look, it argues against itself."** *"It says node-6 started moving
-   540 seconds EARLIER than our answer. So our own pick is excluded on size alone, and
-   it tells you that."*
-3. **Click Grade.** *"Now a second model reads our report and grades it. 4 out of 5 on
-   grounding, 5 on calibration — and 3 out of 5 on actionability. **It marks us down.**
-   We left that in the README."*
-
-### Beat 3 — the finding (2:00–3:00)
-
-**Say:** *"Our agent writes down how sure it is on every case. We checked whether that
-meant anything. It's backwards."*
-
-| it said | cases | actually right |
-|---|---|---|
-| High confidence | 21 | **0.103** |
-| Low confidence | 34 | **0.331** |
-
-*"Three times worse when it's confident. Permutation test, p = 0.006."*
-
-> **Why.** "High confidence" is awarded for a **clean picture** — one stove clearly
-> hottest, nothing moving before it. But a clean picture is *also* exactly what you see
-> when **the fire is somewhere a thermometer can't reach.** A quarter of the real causes
-> in this data are network faults, which live on the order tickets. We were reading
-> thermometers.
-
-**The line to land:** *"A confidence score measured inside one instrument cannot detect
-the failure 'we are using the wrong instrument.' A blind spot and a clean result are the
-same reading."*
-
-**Why it matters:** *"The standard design escalates low-confidence cases to a human. On
-our agent that would have handed people the work it already got right, and auto-approved
-the mistakes. Backwards, silently, in the expensive direction."*
-
-### Beat 4 — the honesty close (3:00–4:00)
-
-Three things, fast:
-
-1. **"We tested the AI twice and it changed nothing."** Given our ranked list, GLM-5.2
-   with reasoning on changed **0 of 20 answers**. We fixed the list so it held the answer
-   96% of the time instead of 54%, re-ran, and it changed **0 of 20 again**. It anchors
-   on our ordering. So the judged run ships with **no model**, and the model does the one
-   job with no deterministic scorer — grading our evidence.
-2. **"Two of our own findings didn't survive our own statistics."** Per-case scores have
-   a standard deviation of 0.3; we were chasing 0.03. We ran a paired bootstrap, two
-   claims came back with confidence intervals spanning zero, and we **retracted them.**
-3. **"A third of our score rides on a hand-written keyword map."** If the judged
-   deployment names its sensors differently, that third degrades. We're naming it rather
-   than letting you find it.
-
-**Close:** *"Three of our four findings are negative and one is a retraction of our own
-claim. On a problem where the best published attempt solves one case in nine, a team
-reporting only wins is a team that didn't look. These are the findings we'd want in the
-room at 3am, when something is actually broken."*
-
----
-
-## Does this hit the judging criteria?
-
-The panel rubric is **Technical Execution 40 · Innovation 30 · Impact 20 · Presentation
-10**, with the Track 1 focus (accuracy, explainability, evaluation strength, token usage)
-applied inside them.
-
-| Criterion | Where the talk earns it |
+| it told us | how often it was right |
 |---|---|
-| **Technical Execution 40%** | Beat 1's number with its provenance; Beat 2 running live, not a recording; every claim reproducible by a named `make` target |
-| **Innovation 30%** | Beat 3 — a measured, significant calibration inversion with a mechanism, plus a gate that fails the build when the agent's prose contradicts its own config |
-| **Impact 20%** | Beat 3's closing line — it transfers to any system that rates its own certainty, not just to incident response |
-| **Presentation 10%** | One story throughout, a live demo instead of screenshots, every technical term introduced by its plain-language twin |
-| *focus:* accuracy | 0.199 vs 0.073, stated with the held-out caveat |
-| *focus:* **explainability** | Beat 2 is entirely this — and worth more than accuracy in this track |
-| *focus:* **evaluation strength** | Beat 4.2, the retraction. This is our strongest dimension. |
-| *focus:* token usage | Beat 2 — 0 tokens, $0.00, said out loud while it runs |
+| "I'm confident" | **1 time in 10** |
+| "I'm not sure" | **1 time in 3** |
 
-**The two questions to expect, and the answers:**
+> Three times *better* when it doubts itself. We checked — it isn't luck.
+>
+> Normally you'd say *"when the machine isn't sure, ask a human."* **That would have been
+> exactly backwards.** Humans would get handed the easy ones, and the mistakes would sail
+> straight through.
 
-> *"Why is there no LLM in the judged run — this is the routing track?"*
-> Because we measured it twice under opposite conditions and it changed 0 of 20 answers
-> both times, while costing 41% of the wall clock. The harness is in the repo, switchable,
-> and the comparison reproduces with `make compare`.
+**Why** — this is the line to land:
 
-> *"How will this do on the held-out deployment?"*
-> Worse than 0.199. We tuned constants while looking at all 70 cases — that's leakage and
-> we name it in the report. Two thirds of the answer rests on a per-case statistic with
-> nothing learned across cases; one third rests on a keyword map that could degrade.
+> It says "I'm confident" when the picture is **clean**: one stove clearly hottest,
+> nothing else moving. But a clean picture also happens when **the fire is somewhere a
+> thermometer can't reach.**
+>
+> **From inside the thermometer, those two look identical.**
+
+### "We tried an AI. Twice. It just agreed with us."
+
+> We handed it our shortlist and asked it to pick. It changed **0 of 20** answers.
+> We thought our shortlist was the problem, so we fixed it — the right answer went from
+> being on the list half the time to **96%** of the time. Re-ran it. **0 of 20 again.**
+>
+> Give it a sorted list and it takes the top one and explains why. It wasn't thinking.
+> It was agreeing.
+>
+> So we don't use it to pick. **We use it to grade our homework** — the one job where no
+> simple rule can do the checking.
 
 ---
 
-## One-sentence version, if you only get 30 seconds
+## 4. Reading the report out loud
 
-> *"We built an agent that finds why a system broke — and the thing we're proudest of is
-> discovering that its own confidence runs backwards, which means the human-in-the-loop
-> design everyone ships would have escalated exactly the wrong cases."*
+When you open the evidence file on stage, this table is on screen. Explain it once,
+in this order — it takes twenty seconds and it makes everything after it land.
+
+| column | say this | what it really is |
+|---|---|---|
+| **onset** | "when this stove *first* started acting odd — the first wisp of smoke" | first sample outside the normal band |
+| **component** | "which stove, or which whole station" | the container / node / service |
+| **KPI** | "which dial we're reading on it — heat? gas? fan speed?" | the metric name |
+| **baseline** | "what that dial reads on a **normal** night" | median over the rest of that day |
+| **peak** | "the worst it got **tonight**" | max deviation inside the window |
+| **z** | "**the surprise score** — how many normal-sized wobbles away from normal this is" | robust z-score (median + MAD) |
+
+**The one to dwell on is `z`.** Say it like this:
+
+> Every dial wobbles a bit. If a stove normally swings two degrees either way, and
+> tonight it swung two hundred — that's a hundred wobbles' worth of surprise. That's what
+> `z` counts. **It's not "how hot", it's "how unusual for this stove."**
+>
+> Which matters, because a stove that runs hot every single night isn't news. We're
+> looking for the one that broke its own habit.
+
+And the design in one sentence, pointing at two columns:
+
+> **The alarm tells you *which*. The smoke tells you *when*.** `z` picks the culprit,
+> `onset` dates the crime — and we only learned to separate those by measuring it.
+
+---
+
+## 5. The story, mapped to money
+
+Every piece of the kitchen has a cost attached. This is what makes it a business problem
+rather than a puzzle.
+
+| In the story | What it is | What it costs a real company |
+|---|---|---|
+| Orders 30 minutes late | A production outage | Revenue stops. For a mid-size shop, thousands of dollars a minute |
+| Twelve stations shouting | Alert storm | Everyone is paged; nobody knows who owns it |
+| Sending someone to the loudest station | Chasing the symptom | **The outage continues while you fix the wrong thing** — this is the expensive mistake |
+| One second to read the whole box | Automated triage | The first 20 minutes of an incident are usually spent just *locating* it. That's the bill this removes |
+| A report with real numbers in it | Checkable evidence | The engineer trusts it in 30 seconds instead of redoing the work. Trust is what makes automation usable |
+| A report with *invented* numbers | Hallucinated evidence | **Worse than nothing.** Sends someone chasing something that isn't there, at 3am, while the outage runs |
+| "I'm confident" being wrong | Miscalibrated confidence | You automate the cases it gets wrong and hand humans the ones it got right. **You've paid for automation and bought risk** |
+| The second machine grading the report | Automated review | The only part of this a person can't check cheaply at scale |
+
+**The one-line business case:**
+
+> *"The costly part of an outage usually isn't the fix — it's the twenty minutes of six
+> people arguing about which team owns it. That's the part this removes. And the reason we
+> care so much about the confidence being backwards is that getting it wrong doesn't just
+> waste the automation — it actively routes your humans to the wrong incidents."*
+
+---
+
+## 6. The map — say this once, near the end
+
+| in the story | what it really is |
+|---|---|
+| One stove | a container — one copy of one service |
+| The building's gas main | a node — the machine they share |
+| A whole station | a service |
+| Temperature readings | metrics (CPU, memory, disk) |
+| An order slip stamped at each station | a trace — spans with timings |
+| Time between two stamps | span latency — time on the wire |
+| **First wisp of smoke** | **onset** — how we date it |
+| **The fire alarm** | **peak / z** — how we pick it |
+| "Hotter than it normally runs" | robust z-score vs the rest of that day |
+| The written report | the evidence file |
+| The second machine that grades it | GLM-5.2, as judge |
+
+No orphans: every row has both halves. If you catch yourself saying something in the
+right column that isn't in the left, stop and say the left instead.
+
+---
+
+## 7. Backup — the three questions you'll get
+
+**"Why is there no AI in the judged run? This is the AI track."**
+
+> We hired the chef twice, and both times he read our shortlist and said "yes, the first
+> one." Zero of twenty changed. He wasn't short of information — the second time our
+> shortlist contained the right answer 96% of the time and he *still* just agreed. He
+> anchors on the order we hand him.
+> *(GLM-5.2, reasoning on, 0/20 twice, under opposite retrieval conditions. The harness is
+> in the repo, switchable; `make compare` reproduces it.)*
+
+**"So where does the AI earn its place?"**
+
+> Grading the report. Whether a stove was hot is arithmetic — no opinion required.
+> Whether a **write-up** is any good is judgement, and nothing simple can check that.
+> That's its one job, and it marks us down on it.
+> *(Accuracy has a deterministic scorer; evidence quality had none — it was our own
+> assertion until GLM supplied one.)*
+
+**"Will this work in a kitchen you've never seen?"**
+
+> Two thirds of it will. "Was this stove hotter than usual **tonight**" needs no prior
+> knowledge of that kitchen — it brings its own normal with it.
+>
+> One third won't travel as well: the part that turns "hot stove" into *why* is a keyword
+> list we wrote by hand. If the next kitchen labels its dials differently, that third gets
+> worse. We're telling you rather than letting you find it.
+> *(Component and time come from a per-case statistic; reason comes from a 19-entry map
+> deciding 40 of 121 gradeable items. Constants were tuned on all 70 cases — leakage,
+> stated in the report.)*
+
+---
+
+## 8. If you only get thirty seconds
+
+> *"We built something that finds why a system broke. The thing we're proudest of is
+> discovering that its own confidence runs backwards — which means the safety design
+> everyone ships would have sent humans to the wrong incidents."*
