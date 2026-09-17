@@ -128,9 +128,30 @@ decomposed the accuracy.
 
 With v2's table the situation is different in exactly the way that matters:
 `recall@1` is 16.7% while `recall@3` is 38.9%. **The answer is usually in the top three
-and we pick the wrong one of them** — which is a judgement problem on a short list, not
-a retrieval problem, and it is the first task in this project where a language model has
-an obvious edge over a sort.
+and we pick the wrong one of them** — a judgement problem on a short list, not retrieval.
+
+So we predicted the model would finally earn its place, and re-ran it on the fixed table.
+
+| On the same 20 cases | Score | Answers changed |
+|---|---|---|
+| v1, shipped | 0.225 | — |
+| v2.1, no model | **0.250** | — |
+| v2.1 + GLM-5.2, reasoning on | **0.250** | **0 / 20** |
+
+**It changed zero of twenty answers again** — on a table that now contains the answer 96%
+of the time. Two independent runs, opposite retrieval conditions, identical behaviour.
+Our hypothesis was wrong, and that is the useful part.
+
+The model was never information-starved. Handed a list that is already sorted, it takes
+row one and writes a justification: **it anchors on our ordering and rubber-stamps it.**
+Give it better rows and it rubber-stamps those instead — which is precisely what
+0.250 → 0.250 is.
+
+That relocates the problem a second time. It is not the data we showed the model, it is
+the **shape**: a ranked list carries our answer inside its order, and the model reads the
+order as the answer. Independent judgement would mean removing the ordering — shuffling
+the candidates, or scoring each alone without its neighbours. **We have not tested that,
+and we are not claiming it works.**
 
 ## No obvious shortcoming left unnamed
 
