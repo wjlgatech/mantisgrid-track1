@@ -1,0 +1,751 @@
+[
+ {
+  "row_id": 0,
+  "task": "task_6",
+  "instruction": "The cloud service system, cloudbed-1, experienced one failure within the time range of March 20, 2022, from 09:00 to 09:30. The specific component responsible for this failure and the underlying reason are currently unknown. You are tasked with identifying the root cause component and the root cause reason.",
+  "seconds": 4.35,
+  "answers": [
+   {
+    "datetime": "2022-03-20 09:09:00",
+    "component": "shippingservice-1",
+    "reason": "container CPU load"
+   }
+  ],
+  "evidence": "## Answer\n\nshippingservice-1 / container CPU load / 2022-03-20 09:09:00\n\n## Confidence\n\nLow. `shippingservice-1` deviates 2.0x harder than the next candidate (z=1306 vs 654), which is why it was picked -- but `node-6` started moving 540s EARLIER. If that ordering is causal rather than sampling noise, the earlier component is the better answer and this one is its victim.\n\n## Evidence\n\nWindow 2022-03-20 09:00\u201309:30 UTC+8, telemetry day `2022_03_20`, 4,261,265 metric rows scanned (`metric_container.csv`, `metric_node.csv`).\n\nRanked by **peak deviation** (robust z against the rest of the day). `onset` is the first sample to leave the band \u2014 it dates the fault, but it does not order this table.\n\n| onset (UTC+8) | component | KPI | baseline | peak | z |\n|---|---|---|---|---|---|\n| 09:09:00 | `shippingservice-1` | `container_cpu_usage_seconds` | 0.0175 | 9.5 | 1305.9 |\n| 09:08:00 | `productcatalogservice` | `mrt` | 4.17 | 68.3 | 653.6 |\n| 09:00:00 | `node-6` | `system.net.tcp.out_segs` | 269 | 6.9e+03 | 365.9 |\n| 09:09:00 | `shippingservice-1` | `container_cpu_system_seconds` | 0.005 | 9.28 | 1251.2 |\n| 09:03:00 | `emailservice-0` | `container_network_receive_MB.eth0` | 0.0253 | 0.605 | 223.5 |\n| 09:03:00 | `emailservice-2` | `container_network_receive_MB.eth0` | 0.0254 | 0.604 | 220.2 |\n| 09:09:00 | `node-1` | `system.cpu.iowait` | 0.29 | 39.9 | 190.6 |\n| 09:05:00 | `paymentservice2-0` | `container_network_receive_MB.eth0` | 0.0229 | 0.6 | 209.3 |\n| 09:15:00 | `emailservice-1` | `container_network_receive_MB.eth0` | 0.0254 | 0.606 | 174.6 |\n| 09:17:00 | `paymentservice-1` | `container_network_receive_MB.eth0` | 0.0226 | 0.325 | 162.6 |\n| 09:00:00 | `node-6` | `system.fs.inodes.used` | 1.57e+06 | 2.3e+06 | 160.9 |\n| 09:28:00 | `paymentservice-2` | `container_network_receive_MB.eth0` | 0.0235 | 0.328 | 150.4 |\n\n`shippingservice-1` has the largest deviation: `container_cpu_usage_seconds` leaves its day-long band at 09:09:00, going from a median of 0.0175 to 9.5 (z=1305.9). 11 of its series went anomalous in this window.\n\n## Ruled out\n\n`productcatalogservice`: anomalous on `mrt` (z=654), and it started 60s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=654 vs 1306). If the fault is one that shows small in metrics, this is the better answer.\n`node-6`: anomalous on `system.net.tcp.out_segs` (z=366), and it started 540s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=366 vs 1306). If the fault is one that shows small in metrics, this is the better answer.\n`emailservice-0`: anomalous on `container_network_receive_MB.eth0` (z=224), and it started 360s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=224 vs 1306). If the fault is one that shows small in metrics, this is the better answer.\n`emailservice-2`: anomalous on `container_network_receive_MB.eth0` (z=220), and it started 360s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=220 vs 1306). If the fault is one that shows small in metrics, this is the better answer.\n\n_Metrics only. Logs and traces were not opened, so a network fault that shows only as parent-to-child span latency would be missed here._\n",
+  "candidates": [
+   {
+    "component": "shippingservice-1",
+    "kpi": "container_cpu_usage_seconds",
+    "z": 1305.9,
+    "onset": "09:09:00",
+    "baseline": 0.01747,
+    "peak": 9.502
+   },
+   {
+    "component": "productcatalogservice",
+    "kpi": "mrt",
+    "z": 653.6,
+    "onset": "09:08:00",
+    "baseline": 4.172,
+    "peak": 68.3
+   },
+   {
+    "component": "node-6",
+    "kpi": "system.net.tcp.out_segs",
+    "z": 365.9,
+    "onset": "09:00:00",
+    "baseline": 268.9,
+    "peak": 6897.0
+   },
+   {
+    "component": "shippingservice-1",
+    "kpi": "container_cpu_system_seconds",
+    "z": 1251.2,
+    "onset": "09:09:00",
+    "baseline": 0.005,
+    "peak": 9.28
+   },
+   {
+    "component": "emailservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 223.5,
+    "onset": "09:03:00",
+    "baseline": 0.02531,
+    "peak": 0.6053
+   },
+   {
+    "component": "emailservice-2",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 220.2,
+    "onset": "09:03:00",
+    "baseline": 0.0254,
+    "peak": 0.6037
+   },
+   {
+    "component": "node-1",
+    "kpi": "system.cpu.iowait",
+    "z": 190.6,
+    "onset": "09:09:00",
+    "baseline": 0.29,
+    "peak": 39.86
+   },
+   {
+    "component": "paymentservice2-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 209.3,
+    "onset": "09:05:00",
+    "baseline": 0.02286,
+    "peak": 0.6001
+   },
+   {
+    "component": "emailservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 174.6,
+    "onset": "09:15:00",
+    "baseline": 0.02541,
+    "peak": 0.6063
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 162.6,
+    "onset": "09:17:00",
+    "baseline": 0.02259,
+    "peak": 0.325
+   }
+  ],
+  "judge": {
+   "grades": {
+    "grounding": {
+     "score": 5,
+     "why": "Every number in the table is traceable to named files (metric_container.csv, metric_node.csv) with specific windows, baselines, peaks, and z-scores; no invented specifics."
+    },
+    "calibration": {
+     "score": 4,
+     "why": "Low confidence is appropriately stated given the agent openly acknowledges that node-6 started 540s earlier and could be the true root cause, making this uncertain-and-close rather than confidently-wrong."
+    },
+    "ruled_out": {
+     "score": 4,
+     "why": "Genuinely considers four alternatives with specific z-scores and onset times, honestly admits they are only ruled out on magnitude not timing, and flags that earlier components could be the real cause."
+    },
+    "actionability": {
+     "score": 4,
+     "why": "An on-call engineer gets a clear primary target (shippingservice-1 CPU) plus explicit secondary leads (node-6 at 09:00, productcatalogservice at 09:08) with specific metrics to inspect."
+    },
+    "overall": 4,
+    "one_line": "Well-grounded and honestly calibrated analysis that transparently flags its own timing weakness while providing actionable leads, though the pick may be a victim rather than the root cause."
+   },
+   "seconds": 29.23,
+   "usd": 0.005159,
+   "model": "zai-org/GLM-5.2",
+   "usage": {
+    "zai-org/GLM-5.2": {
+     "prompt_tokens": 1425,
+     "completion_tokens": 719,
+     "calls": 1
+    }
+   }
+  }
+ },
+ {
+  "row_id": 5,
+  "task": "task_2",
+  "instruction": "The cloud service system, cloudbed-1, experienced a failure within the time range of March 20, 2022, from 11:30 to 12:00. The underlying reason for this failure is currently unknown. Please identify the root cause reason for the failure.",
+  "seconds": 2.82,
+  "answers": [
+   {
+    "datetime": "2022-03-20 11:36:00",
+    "component": "recommendationservice",
+    "reason": "container network latency"
+   }
+  ],
+  "evidence": "## Answer\n\nrecommendationservice / container network latency / 2022-03-20 11:36:00\n\n## Confidence\n\nLow. `recommendationservice` deviates 243.3x harder than the next candidate (z=74488 vs 306), which is why it was picked -- but `node-1` started moving 360s EARLIER. If that ordering is causal rather than sampling noise, the earlier component is the better answer and this one is its victim.\n\n## Evidence\n\nWindow 2022-03-20 11:30\u201312:00 UTC+8, telemetry day `2022_03_20`, 4,261,265 metric rows scanned (`metric_container.csv`, `metric_node.csv`).\n\nRanked by **peak deviation** (robust z against the rest of the day). `onset` is the first sample to leave the band \u2014 it dates the fault, but it does not order this table.\n\n| onset (UTC+8) | component | KPI | baseline | peak | z |\n|---|---|---|---|---|---|\n| 11:36:00 | `recommendationservice` | `mrt` | 3.38 | 7.71e+03 | 74487.6 |\n| 11:58:00 | `paymentservice-2` | `container_network_receive_MB.eth0` | 0.0235 | 0.632 | 306.1 |\n| 11:30:00 | `node-1` | `system.cpu.iowait` | 0.29 | 27.3 | 129.9 |\n| 11:48:00 | `emailservice-1` | `container_network_receive_MB.eth0` | 0.0254 | 0.709 | 206.3 |\n| 11:54:00 | `paymentservice-1` | `container_network_receive_MB.eth0` | 0.0226 | 0.313 | 157.5 |\n| 11:36:00 | `paymentservice-0` | `container_network_receive_MB.eth0` | 0.0225 | 0.324 | 152.6 |\n| 11:31:00 | `node-5` | `system.net.udp.out_datagrams` | 2.92 | 40.3 | 72.1 |\n| 11:36:00 | `recommendationservice2-0` | `container_cpu_user_seconds` | 0.09 | 9.22 | 123.2 |\n| 11:34:00 | `emailservice-2` | `container_network_receive_MB.eth0` | 0.0253 | 0.321 | 113.4 |\n| 11:36:00 | `emailservice-0` | `container_network_receive_MB.eth0` | 0.0253 | 0.317 | 112.2 |\n| 11:56:00 | `node-1` | `system.mem.real.pct_useage` | 79.8 | 9.01 | 59.7 |\n| 11:33:00 | `shippingservice-1` | `container_network_receive_MB.eth0` | 0.0324 | 0.639 | 111.3 |\n\n`recommendationservice` has the largest deviation: `mrt` leaves its day-long band at 11:36:00, going from a median of 3.38 to 7.71e+03 (z=74487.6). 1 of its series went anomalous in this window.\n\n## Ruled out\n\n`paymentservice-2`: anomalous on `container_network_receive_MB.eth0` (z=306) but started 1320s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`node-1`: anomalous on `system.cpu.iowait` (z=130), and it started 360s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=130 vs 74488). If the fault is one that shows small in metrics, this is the better answer.\n`emailservice-1`: anomalous on `container_network_receive_MB.eth0` (z=206) but started 720s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`paymentservice-1`: anomalous on `container_network_receive_MB.eth0` (z=158) but started 1080s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n\n_Metrics only. Logs and traces were not opened, so a network fault that shows only as parent-to-child span latency would be missed here._\n",
+  "candidates": [
+   {
+    "component": "recommendationservice",
+    "kpi": "mrt",
+    "z": 74487.6,
+    "onset": "11:36:00",
+    "baseline": 3.38,
+    "peak": 7712.0
+   },
+   {
+    "component": "paymentservice-2",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 306.1,
+    "onset": "11:58:00",
+    "baseline": 0.02346,
+    "peak": 0.632
+   },
+   {
+    "component": "node-1",
+    "kpi": "system.cpu.iowait",
+    "z": 129.9,
+    "onset": "11:30:00",
+    "baseline": 0.29,
+    "peak": 27.26
+   },
+   {
+    "component": "emailservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 206.3,
+    "onset": "11:48:00",
+    "baseline": 0.02537,
+    "peak": 0.7092
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 157.5,
+    "onset": "11:54:00",
+    "baseline": 0.02258,
+    "peak": 0.3133
+   },
+   {
+    "component": "paymentservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 152.6,
+    "onset": "11:36:00",
+    "baseline": 0.02251,
+    "peak": 0.3236
+   },
+   {
+    "component": "node-5",
+    "kpi": "system.net.udp.out_datagrams",
+    "z": 72.1,
+    "onset": "11:31:00",
+    "baseline": 2.92,
+    "peak": 40.34
+   },
+   {
+    "component": "recommendationservice2-0",
+    "kpi": "container_cpu_user_seconds",
+    "z": 123.2,
+    "onset": "11:36:00",
+    "baseline": 0.09,
+    "peak": 9.22
+   },
+   {
+    "component": "emailservice-2",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 113.4,
+    "onset": "11:34:00",
+    "baseline": 0.02534,
+    "peak": 0.3212
+   },
+   {
+    "component": "emailservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 112.2,
+    "onset": "11:36:00",
+    "baseline": 0.0253,
+    "peak": 0.3166
+   }
+  ],
+  "judge": {
+   "grades": {
+    "grounding": {
+     "score": 5,
+     "why": "Every metric, z-score, and timestamp is explicitly tied to the scanned CSV files and presented in a clear table with no unsupported claims."
+    },
+    "calibration": {
+     "score": 5,
+     "why": "The 'Low' confidence perfectly matches the tension between the extreme magnitude of the chosen component and the earlier onset of a competing alternative."
+    },
+    "ruled_out": {
+     "score": 5,
+     "why": "It systematically evaluates alternatives using timing and magnitude, explicitly highlighting the strongest counter-argument (node-1's earlier onset) and acknowledging the limits of a metric-only analysis."
+    },
+    "actionability": {
+     "score": 4,
+     "why": "An on-call engineer knows exactly which components and metrics to investigate first, though the conflicting temporal signals require them to split their attention between two areas."
+    },
+    "overall": 5,
+    "one_line": "A highly grounded, perfectly calibrated, and thorough RCA that transparently handles conflicting evidence and provides clear next steps."
+   },
+   "seconds": 19.47,
+   "usd": 0.005364,
+   "model": "zai-org/GLM-5.2",
+   "usage": {
+    "zai-org/GLM-5.2": {
+     "prompt_tokens": 1333,
+     "completion_tokens": 795,
+     "calls": 1
+    }
+   }
+  }
+ },
+ {
+  "row_id": 25,
+  "task": "task_7",
+  "instruction": "The cloud service system, cloudbed-1, experienced a failure within the time range of March 20, 2022, from 23:00 to 23:30. The exact time of the root cause occurrence, the affected component, and the underlying reason for this failure are currently unknown. Please identify the root cause occurrence datetime, the root cause component, and the root cause reason.",
+  "seconds": 2.82,
+  "answers": [
+   {
+    "datetime": "2022-03-20 23:09:00",
+    "component": "checkoutservice-2",
+    "reason": "container CPU load"
+   }
+  ],
+  "evidence": "## Answer\n\ncheckoutservice-2 / container CPU load / 2022-03-20 23:09:00\n\n## Confidence\n\nLow. `checkoutservice-2` deviates 1.1x harder than the next candidate (z=605 vs 548), which is why it was picked -- but `node-6` started moving 540s EARLIER. If that ordering is causal rather than sampling noise, the earlier component is the better answer and this one is its victim.\n\n## Evidence\n\nWindow 2022-03-20 23:00\u201323:30 UTC+8, telemetry day `2022_03_20`, 4,261,265 metric rows scanned (`metric_container.csv`, `metric_node.csv`).\n\nRanked by **peak deviation** (robust z against the rest of the day). `onset` is the first sample to leave the band \u2014 it dates the fault, but it does not order this table.\n\n| onset (UTC+8) | component | KPI | baseline | peak | z |\n|---|---|---|---|---|---|\n| 23:09:00 | `checkoutservice-2` | `container_cpu_cfs_throttled_seconds` | 0.0726 | 47.8 | 604.9 |\n| 23:00:00 | `node-6` | `system.cpu.iowait` | 0.02 | 16.3 | 548.4 |\n| 23:10:00 | `checkoutservice` | `mrt` | 53.1 | 144 | 10.6 |\n| 23:00:00 | `currencyservice-2` | `container_memory_usage_MB` | 54.8 | 256 | 330.9 |\n| 23:08:00 | `paymentservice-1` | `container_network_receive_MB.eth0` | 0.0226 | 0.595 | 307.1 |\n| 23:09:00 | `checkoutservice-2` | `container_cpu_user_seconds` | 0.025 | 4.45 | 298.1 |\n| 23:00:00 | `node-6` | `system.net.tcp.out_segs` | 268 | 7.1e+03 | 391.6 |\n| 23:00:00 | `checkoutservice-2` | `container_memory_rss` | 1.74e+07 | 7.66e+07 | 295.4 |\n| 23:00:00 | `currencyservice-0` | `container_cpu_system_seconds` | 0.03 | 3.68 | 246.5 |\n| 23:09:00 | `checkoutservice-2` | `container_cpu_cfs_throttled_periods` | 1.17 | 243 | 245.0 |\n| 23:00:00 | `node-6` | `system.fs.inodes.used` | 1.57e+06 | 3.27e+06 | 387.7 |\n| 23:00:00 | `currencyservice-2` | `container_cpu_system_seconds` | 0.03 | 3.39 | 227.0 |\n\n`checkoutservice-2` has the largest deviation: `container_cpu_cfs_throttled_seconds` leaves its day-long band at 23:09:00, going from a median of 0.0726 to 47.8 (z=604.9). 13 of its series went anomalous in this window.\n\n## Ruled out\n\n`node-6`: anomalous on `system.cpu.iowait` (z=548), and it started 540s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=548 vs 605). If the fault is one that shows small in metrics, this is the better answer.\n`checkoutservice`: anomalous on `mrt` (z=11) but started 60s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`currencyservice-2`: anomalous on `container_memory_usage_MB` (z=331), and it started 540s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=331 vs 605). If the fault is one that shows small in metrics, this is the better answer.\n`paymentservice-1`: anomalous on `container_network_receive_MB.eth0` (z=307), and it started 60s BEFORE the pick. Not ruled out on timing \u2014 it is ruled out only on magnitude (z=307 vs 605). If the fault is one that shows small in metrics, this is the better answer.\n\n_Metrics only. Logs and traces were not opened, so a network fault that shows only as parent-to-child span latency would be missed here._\n",
+  "candidates": [
+   {
+    "component": "checkoutservice-2",
+    "kpi": "container_cpu_cfs_throttled_seconds",
+    "z": 604.9,
+    "onset": "23:09:00",
+    "baseline": 0.0726,
+    "peak": 47.77
+   },
+   {
+    "component": "node-6",
+    "kpi": "system.cpu.iowait",
+    "z": 548.4,
+    "onset": "23:00:00",
+    "baseline": 0.02,
+    "peak": 16.28
+   },
+   {
+    "component": "checkoutservice",
+    "kpi": "mrt",
+    "z": 10.6,
+    "onset": "23:10:00",
+    "baseline": 53.12,
+    "peak": 144.2
+   },
+   {
+    "component": "currencyservice-2",
+    "kpi": "container_memory_usage_MB",
+    "z": 330.9,
+    "onset": "23:00:00",
+    "baseline": 54.76,
+    "peak": 256.0
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 307.1,
+    "onset": "23:08:00",
+    "baseline": 0.02259,
+    "peak": 0.5949
+   },
+   {
+    "component": "checkoutservice-2",
+    "kpi": "container_cpu_user_seconds",
+    "z": 298.1,
+    "onset": "23:09:00",
+    "baseline": 0.025,
+    "peak": 4.445
+   },
+   {
+    "component": "node-6",
+    "kpi": "system.net.tcp.out_segs",
+    "z": 391.6,
+    "onset": "23:00:00",
+    "baseline": 268.4,
+    "peak": 7096.0
+   },
+   {
+    "component": "checkoutservice-2",
+    "kpi": "container_memory_rss",
+    "z": 295.4,
+    "onset": "23:00:00",
+    "baseline": 17350000.0,
+    "peak": 76550000.0
+   },
+   {
+    "component": "currencyservice-0",
+    "kpi": "container_cpu_system_seconds",
+    "z": 246.5,
+    "onset": "23:00:00",
+    "baseline": 0.03,
+    "peak": 3.685
+   },
+   {
+    "component": "checkoutservice-2",
+    "kpi": "container_cpu_cfs_throttled_periods",
+    "z": 245.0,
+    "onset": "23:09:00",
+    "baseline": 1.167,
+    "peak": 243.3
+   }
+  ],
+  "judge": {
+   "grades": {
+    "grounding": {
+     "score": 5,
+     "why": "Every number in the table is tied to named CSV files and a specific time window, with baselines, peaks, and z-scores that are internally consistent and verifiable."
+    },
+    "calibration": {
+     "score": 4,
+     "why": "The 'Low' confidence is honest and appropriate given the agent's own admission that node-6 moved 540s earlier, though it could arguably be even lower given three candidates precede the pick."
+    },
+    "ruled_out": {
+     "score": 4,
+     "why": "Four alternatives are explicitly considered with KPI, z-score, and timing, and the agent transparently admits they are only ruled out on magnitude\u2014not timing\u2014but the ruling-out basis is weak since earlier onset is a strong causal signal it underweights."
+    },
+    "actionability": {
+     "score": 4,
+     "why": "An on-call engineer gets a concrete component, KPI (CFS throttled seconds), and baseline-to-peak values to investigate immediately, plus a named earlier suspect (node-6 iowait) to check in parallel."
+    },
+    "overall": 4,
+    "one_line": "Well-grounded and honestly calibrated, with genuine alternative consideration, but the ruling-out logic relies on magnitude over timing, which undercuts the pick."
+   },
+   "seconds": 36.34,
+   "usd": 0.005928,
+   "model": "zai-org/GLM-5.2",
+   "usage": {
+    "zai-org/GLM-5.2": {
+     "prompt_tokens": 1384,
+     "completion_tokens": 907,
+     "calls": 1
+    }
+   }
+  }
+ },
+ {
+  "row_id": 29,
+  "task": "task_6",
+  "instruction": "The cloud service system, cloudbed-1, encountered one failure within the time range of March 20, 2022, from 22:00 to 22:30. We currently do not know the exact component affected by this failure or the underlying reason for it. You are tasked with identifying both the root cause component and the root cause reason.",
+  "seconds": 2.78,
+  "answers": [
+   {
+    "datetime": "2022-03-20 22:00:00",
+    "component": "node-6",
+    "reason": "node CPU load"
+   }
+  ],
+  "evidence": "## Answer\n\nnode-6 / node CPU load / 2022-03-20 22:00:00\n\n## Confidence\n\nMedium. `node-6` leads on magnitude but only by 1.2x (z=540 vs 443); `frontend` is a live alternative.\n\n## Evidence\n\nWindow 2022-03-20 22:00\u201322:30 UTC+8, telemetry day `2022_03_20`, 4,261,265 metric rows scanned (`metric_container.csv`, `metric_node.csv`).\n\nRanked by **peak deviation** (robust z against the rest of the day). `onset` is the first sample to leave the band \u2014 it dates the fault, but it does not order this table.\n\n| onset (UTC+8) | component | KPI | baseline | peak | z |\n|---|---|---|---|---|---|\n| 22:00:00 | `node-6` | `system.cpu.iowait` | 0.02 | 16 | 539.6 |\n| 22:02:00 | `frontend` | `mrt` | 48.4 | 818 | 443.1 |\n| 22:00:00 | `currencyservice-2` | `container_memory_usage_MB` | 54.8 | 256 | 330.9 |\n| 22:08:00 | `paymentservice-0` | `container_network_receive_MB.eth0` | 0.0225 | 0.606 | 294.3 |\n| 22:00:00 | `currencyservice-0` | `container_cpu_system_seconds` | 0.03 | 3.84 | 256.6 |\n| 22:00:00 | `currencyservice-2` | `container_cpu_system_seconds` | 0.03 | 3.44 | 230.0 |\n| 22:00:00 | `node-6` | `system.net.tcp.out_segs` | 268 | 7.04e+03 | 388.2 |\n| 22:17:00 | `emailservice-0` | `container_network_receive_MB.eth0` | 0.0253 | 0.602 | 218.8 |\n| 22:00:00 | `currencyservice2-0` | `container_memory_usage_MB` | 52.2 | 128 | 173.3 |\n| 22:10:00 | `paymentservice-1` | `container_network_receive_MB.eth0` | 0.0226 | 0.312 | 154.1 |\n| 22:00:00 | `node-6` | `system.fs.inodes.used` | 1.57e+06 | 3.27e+06 | 387.6 |\n| 22:03:00 | `paymentservice-2` | `container_network_receive_MB.eth0` | 0.0235 | 0.316 | 149.3 |\n\n`node-6` has the largest deviation: `system.cpu.iowait` leaves its day-long band at 22:00:00, going from a median of 0.02 to 16 (z=539.6). 19 of its series went anomalous in this window.\n\n## Ruled out\n\n`frontend`: anomalous on `mrt` (z=443) but started 120s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`currencyservice-2`: anomalous on `container_memory_usage_MB` (z=331) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n`paymentservice-0`: anomalous on `container_network_receive_MB.eth0` (z=294) but started 480s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`currencyservice-0`: anomalous on `container_cpu_system_seconds` (z=257) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n\n_Metrics only. Logs and traces were not opened, so a network fault that shows only as parent-to-child span latency would be missed here._\n",
+  "candidates": [
+   {
+    "component": "node-6",
+    "kpi": "system.cpu.iowait",
+    "z": 539.6,
+    "onset": "22:00:00",
+    "baseline": 0.02,
+    "peak": 16.02
+   },
+   {
+    "component": "frontend",
+    "kpi": "mrt",
+    "z": 443.1,
+    "onset": "22:02:00",
+    "baseline": 48.38,
+    "peak": 818.0
+   },
+   {
+    "component": "currencyservice-2",
+    "kpi": "container_memory_usage_MB",
+    "z": 330.9,
+    "onset": "22:00:00",
+    "baseline": 54.76,
+    "peak": 256.0
+   },
+   {
+    "component": "paymentservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 294.3,
+    "onset": "22:08:00",
+    "baseline": 0.02251,
+    "peak": 0.6061
+   },
+   {
+    "component": "currencyservice-0",
+    "kpi": "container_cpu_system_seconds",
+    "z": 256.6,
+    "onset": "22:00:00",
+    "baseline": 0.03,
+    "peak": 3.835
+   },
+   {
+    "component": "currencyservice-2",
+    "kpi": "container_cpu_system_seconds",
+    "z": 230.0,
+    "onset": "22:00:00",
+    "baseline": 0.03,
+    "peak": 3.44
+   },
+   {
+    "component": "node-6",
+    "kpi": "system.net.tcp.out_segs",
+    "z": 388.2,
+    "onset": "22:00:00",
+    "baseline": 268.4,
+    "peak": 7037.0
+   },
+   {
+    "component": "emailservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 218.8,
+    "onset": "22:17:00",
+    "baseline": 0.02531,
+    "peak": 0.6019
+   },
+   {
+    "component": "currencyservice2-0",
+    "kpi": "container_memory_usage_MB",
+    "z": 173.3,
+    "onset": "22:00:00",
+    "baseline": 52.22,
+    "peak": 128.0
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 154.1,
+    "onset": "22:10:00",
+    "baseline": 0.02259,
+    "peak": 0.3123
+   }
+  ],
+  "judge": {
+   "grades": {
+    "grounding": {
+     "score": 5,
+     "why": "Every metric, z-score, and timestamp is explicitly tied to named files (metric_container.csv, metric_node.csv) and a specific time window."
+    },
+    "calibration": {
+     "score": 5,
+     "why": "Confidence is appropriately set to Medium, acknowledging the 1.2x magnitude difference over the alternative and explicitly stating that logs/traces were not checked."
+    },
+    "ruled_out": {
+     "score": 5,
+     "why": "Thoroughly evaluates four alternatives, using onset timing to logically exclude downstream effects while honestly admitting when timing cannot separate simultaneous events."
+    },
+    "actionability": {
+     "score": 5,
+     "why": "Directs the on-call engineer exactly to node-6's system.cpu.iowait metric at 22:00:00, providing a clear and immediate next step for investigation."
+    },
+    "overall": 5,
+    "one_line": "A highly actionable, well-calibrated analysis with excellent grounding and thorough exclusion of alternative root causes."
+   },
+   "seconds": 60.48,
+   "usd": 0.005156,
+   "model": "zai-org/GLM-5.2",
+   "usage": {
+    "zai-org/GLM-5.2": {
+     "prompt_tokens": 1244,
+     "completion_tokens": 776,
+     "calls": 1
+    }
+   }
+  }
+ },
+ {
+  "row_id": 40,
+  "task": "task_5",
+  "instruction": "On March 21, 2022, between 05:00 and 05:30, the cloudbed-1 system experienced a failure. The exact datetime of the root cause occurrence and the component responsible for this failure are unknown. You are required to identify the root cause occurrence datetime and the root cause component.",
+  "seconds": 4.52,
+  "answers": [
+   {
+    "datetime": "2022-03-21 05:00:00",
+    "component": "emailservice",
+    "reason": "container network latency"
+   }
+  ],
+  "evidence": "## Answer\n\nemailservice / container network latency / 2022-03-21 05:00:00\n\n## Confidence\n\nHigh. `emailservice` deviates 3836072.8x harder than anything else (z=162227119869 vs 42290) and nothing anomalous started before it.\n\n## Evidence\n\nWindow 2022-03-21 05:00\u201305:30 UTC+8, telemetry day `2022_03_21`, 4,261,705 metric rows scanned (`metric_container.csv`, `metric_node.csv`).\n\nRanked by **peak deviation** (robust z against the rest of the day). `onset` is the first sample to leave the band \u2014 it dates the fault, but it does not order this table.\n\n| onset (UTC+8) | component | KPI | baseline | peak | z |\n|---|---|---|---|---|---|\n| 05:00:00 | `emailservice` | `mrt` | 1.05 | 1.81 | 162227119869.3 |\n| 05:00:00 | `node-6` | `system.io.rkb_s` | 2 | 1.25e+05 | 42289.9 |\n| 05:07:00 | `paymentservice-2` | `container_network_receive_MB.eth0` | 0.0234 | 0.601 | 283.7 |\n| 05:17:00 | `emailservice-0` | `container_network_receive_MB.eth0` | 0.0259 | 0.621 | 227.8 |\n| 05:00:00 | `emailservice-2` | `container_network_receive_MB.eth0` | 0.0258 | 0.601 | 206.0 |\n| 05:11:00 | `paymentservice-1` | `container_network_receive_MB.eth0` | 0.0226 | 0.313 | 148.0 |\n| 05:16:00 | `node-4` | `system.mem.used` | 1.55e+04 | 2.44e+04 | 3009.6 |\n| 05:10:00 | `emailservice2-0` | `container_network_receive_MB.eth0` | 0.027 | 0.608 | 140.4 |\n| 05:03:00 | `paymentservice-0` | `container_network_receive_MB.eth0` | 0.0227 | 0.313 | 133.2 |\n| 05:09:00 | `paymentservice2-0` | `container_network_receive_MB.eth0` | 0.0231 | 0.314 | 117.2 |\n| 05:18:00 | `node-4` | `system.mem.usable` | 1.66e+04 | 7.7e+03 | 3007.9 |\n| 05:24:00 | `emailservice-1` | `container_network_receive_MB.eth0` | 0.0253 | 0.327 | 86.4 |\n\n`emailservice` has the largest deviation: `mrt` leaves its day-long band at 05:00:00, going from a median of 1.05 to 1.81 (z=162227119869.3). 1 of its series went anomalous in this window.\n\n## Ruled out\n\n`node-6`: anomalous on `system.io.rkb_s` (z=42290) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n`paymentservice-2`: anomalous on `container_network_receive_MB.eth0` (z=284) but started 420s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`emailservice-0`: anomalous on `container_network_receive_MB.eth0` (z=228) but started 1020s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`emailservice-2`: anomalous on `container_network_receive_MB.eth0` (z=206) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n\n_Metrics only. Logs and traces were not opened, so a network fault that shows only as parent-to-child span latency would be missed here._\n",
+  "candidates": [
+   {
+    "component": "emailservice",
+    "kpi": "mrt",
+    "z": 162227119869.3,
+    "onset": "05:00:00",
+    "baseline": 1.05,
+    "peak": 1.812
+   },
+   {
+    "component": "node-6",
+    "kpi": "system.io.rkb_s",
+    "z": 42289.9,
+    "onset": "05:00:00",
+    "baseline": 2.0,
+    "peak": 125400.0
+   },
+   {
+    "component": "paymentservice-2",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 283.7,
+    "onset": "05:07:00",
+    "baseline": 0.02341,
+    "peak": 0.601
+   },
+   {
+    "component": "emailservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 227.8,
+    "onset": "05:17:00",
+    "baseline": 0.02589,
+    "peak": 0.621
+   },
+   {
+    "component": "emailservice-2",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 206.0,
+    "onset": "05:00:00",
+    "baseline": 0.02576,
+    "peak": 0.6013
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 148.0,
+    "onset": "05:11:00",
+    "baseline": 0.02259,
+    "peak": 0.3127
+   },
+   {
+    "component": "node-4",
+    "kpi": "system.mem.used",
+    "z": 3009.6,
+    "onset": "05:16:00",
+    "baseline": 15500.0,
+    "peak": 24420.0
+   },
+   {
+    "component": "emailservice2-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 140.4,
+    "onset": "05:10:00",
+    "baseline": 0.02703,
+    "peak": 0.6075
+   },
+   {
+    "component": "paymentservice-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 133.2,
+    "onset": "05:03:00",
+    "baseline": 0.0227,
+    "peak": 0.313
+   },
+   {
+    "component": "paymentservice2-0",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 117.2,
+    "onset": "05:09:00",
+    "baseline": 0.02313,
+    "peak": 0.3138
+   }
+  ],
+  "judge": {
+   "grades": {},
+   "seconds": 74.94,
+   "usd": 0.007078,
+   "model": "zai-org/GLM-5.2",
+   "usage": {
+    "zai-org/GLM-5.2": {
+     "prompt_tokens": 1284,
+     "completion_tokens": 1200,
+     "calls": 1
+    }
+   }
+  }
+ },
+ {
+  "row_id": 62,
+  "task": "task_1",
+  "instruction": "On March 21, 2022, between 20:00 and 20:30, the cloud service system cloudbed-1 experienced a failure. The exact time of the root cause occurrence is unknown, complicating the diagnosis process. Please identify the root cause occurrence datetime.",
+  "seconds": 2.84,
+  "answers": [
+   {
+    "datetime": "2022-03-21 20:00:00",
+    "component": "emailservice",
+    "reason": "container network latency"
+   }
+  ],
+  "evidence": "## Answer\n\nemailservice / container network latency / 2022-03-21 20:00:00\n\n## Confidence\n\nHigh. `emailservice` deviates 57617507.5x harder than anything else (z=446597359794 vs 7751) and nothing anomalous started before it.\n\n## Evidence\n\nWindow 2022-03-21 20:00\u201320:30 UTC+8, telemetry day `2022_03_21`, 4,261,705 metric rows scanned (`metric_container.csv`, `metric_node.csv`).\n\nRanked by **peak deviation** (robust z against the rest of the day). `onset` is the first sample to leave the band \u2014 it dates the fault, but it does not order this table.\n\n| onset (UTC+8) | component | KPI | baseline | peak | z |\n|---|---|---|---|---|---|\n| 20:00:00 | `emailservice` | `mrt` | 1.05 | 3.07 | 446597359794.0 |\n| 20:00:00 | `paymentservice-1` | `container_cpu_usage_seconds` | 0.00386 | 25.9 | 7751.1 |\n| 20:02:00 | `node-3` | `system.io.w_await` | 0.38 | 164 | 2754.1 |\n| 20:00:00 | `paymentservice-1` | `container_fs_usage_MB./dev/vda1` | 654 | 3.86e+03 | 2903.2 |\n| 20:00:00 | `paymentservice2-0` | `container_fs_usage_MB./dev/vda1` | 655 | 0.621 | 1214.6 |\n| 20:00:00 | `paymentservice-0` | `container_fs_usage_MB./dev/vda1` | 653 | 0.707 | 645.7 |\n| 20:02:00 | `node-3` | `system.io.await` | 0.38 | 163 | 2741.1 |\n| 20:00:00 | `paymentservice-1` | `container_memory_failures.container.pgfault` | 33 | 2.73e+04 | 557.5 |\n| 20:00:00 | `paymentservice-1` | `container_memory_failures.hierarchy.pgfault` | 33 | 2.73e+04 | 557.5 |\n| 20:26:00 | `paymentservice-1` | `container_network_receive_MB.eth0` | 0.0226 | 0.606 | 299.7 |\n| 20:00:00 | `node-6` | `system.fs.inodes.used` | 1.57e+06 | 2.85e+06 | 798.1 |\n| 20:26:00 | `paymentservice-2` | `container_network_receive_MB.eth0` | 0.0234 | 0.59 | 277.7 |\n\n`emailservice` has the largest deviation: `mrt` leaves its day-long band at 20:00:00, going from a median of 1.05 to 3.07 (z=446597359794.0). 1 of its series went anomalous in this window.\n\n## Ruled out\n\n`paymentservice-1`: anomalous on `container_cpu_usage_seconds` (z=7751) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n`node-3`: anomalous on `system.io.w_await` (z=2754) but started 120s AFTER the pick \u2014 consistent with being downstream of it, an effect rather than the cause.\n`paymentservice-1`: anomalous on `container_fs_usage_MB./dev/vda1` (z=2903) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n`paymentservice2-0`: anomalous on `container_fs_usage_MB./dev/vda1` (z=1215) and first deviates in the SAME sample as the pick. Timing cannot separate these two at this sampling rate.\n\n_Metrics only. Logs and traces were not opened, so a network fault that shows only as parent-to-child span latency would be missed here._\n",
+  "candidates": [
+   {
+    "component": "emailservice",
+    "kpi": "mrt",
+    "z": 446597359794.0,
+    "onset": "20:00:00",
+    "baseline": 1.05,
+    "peak": 3.069
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_cpu_usage_seconds",
+    "z": 7751.1,
+    "onset": "20:00:00",
+    "baseline": 0.003856,
+    "peak": 25.89
+   },
+   {
+    "component": "node-3",
+    "kpi": "system.io.w_await",
+    "z": 2754.1,
+    "onset": "20:02:00",
+    "baseline": 0.38,
+    "peak": 163.7
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_fs_usage_MB./dev/vda1",
+    "z": 2903.2,
+    "onset": "20:00:00",
+    "baseline": 653.9,
+    "peak": 3861.0
+   },
+   {
+    "component": "paymentservice2-0",
+    "kpi": "container_fs_usage_MB./dev/vda1",
+    "z": 1214.6,
+    "onset": "20:00:00",
+    "baseline": 655.4,
+    "peak": 0.6211
+   },
+   {
+    "component": "paymentservice-0",
+    "kpi": "container_fs_usage_MB./dev/vda1",
+    "z": 645.7,
+    "onset": "20:00:00",
+    "baseline": 653.2,
+    "peak": 0.707
+   },
+   {
+    "component": "node-3",
+    "kpi": "system.io.await",
+    "z": 2741.1,
+    "onset": "20:02:00",
+    "baseline": 0.38,
+    "peak": 162.9
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_memory_failures.container.pgfault",
+    "z": 557.5,
+    "onset": "20:00:00",
+    "baseline": 33.0,
+    "peak": 27310.0
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_memory_failures.hierarchy.pgfault",
+    "z": 557.5,
+    "onset": "20:00:00",
+    "baseline": 33.0,
+    "peak": 27310.0
+   },
+   {
+    "component": "paymentservice-1",
+    "kpi": "container_network_receive_MB.eth0",
+    "z": 299.7,
+    "onset": "20:26:00",
+    "baseline": 0.02258,
+    "peak": 0.6061
+   }
+  ],
+  "judge": {
+   "grades": {
+    "grounding": {
+     "score": 3,
+     "why": "Numbers are tied to named files and windows, but the headline z-score of ~446 billion is a statistical artifact of near-zero MAD (baseline 1.05\u2192peak 3.07 is only ~3x), and the claim of '57617507.5x harder' is an interpretation the data does not support."
+    },
+    "calibration": {
+     "score": 2,
+     "why": "High confidence is unjustified: the ruled-out section itself admits timing cannot separate emailservice from paymentservice-1, and the dominant z-score is a near-zero-variance artifact rather than a meaningful signal strength indicator."
+    },
+    "ruled_out": {
+     "score": 3,
+     "why": "Multiple alternatives are listed with timing-based exclusion reasoning, and the file honestly flags that logs/traces were not examined, but it does not grapple with the fact that paymentservice-1 shows multiple severe simultaneous anomalies (CPU, filesystem, memory) that could make it the more plausible root cause."
+    },
+    "actionability": {
+     "score": 3,
+     "why": "An on-call engineer gets a concrete component, KPI, and window to inspect, but the stated root cause 'container network latency' is not directly evidenced by a network-latency metric for emailservice, so the next diagnostic step is somewhat ambiguous."
+    },
+    "overall": 3,
+    "one_line": "Structured and traces to files, but rests on a statistically meaningless z-score artifact and claims High confidence while admitting timing cannot separate the top two candidates."
+   },
+   "seconds": 34.28,
+   "usd": 0.006468,
+   "model": "zai-org/GLM-5.2",
+   "usage": {
+    "zai-org/GLM-5.2": {
+     "prompt_tokens": 1292,
+     "completion_tokens": 1059,
+     "calls": 1
+    }
+   }
+  }
+ }
+]

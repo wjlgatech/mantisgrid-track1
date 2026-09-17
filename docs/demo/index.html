@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RCA console — live demo</title>
+<style>
+:root{--bg:#faf9f5;--card:#fff;--card2:#f0eee6;--ink:#141413;--muted:#5c5b57;--line:#e3e0d6;
+--line2:#b0aea5;--accent:#d97757;--blue:#6a9bcc;--green:#788c5d;
+--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+--sans:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6}
+.nav{background:var(--card);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;gap:6px;flex-wrap:wrap}
+.nav a{font-size:.85rem;font-weight:600;text-decoration:none;color:var(--muted);padding:7px 14px;border-radius:8px}
+.nav a.on{background:var(--accent);color:#fff}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:18px 24px}
+h1{margin:0;font-size:1.15rem}
+.sub{color:var(--muted);font-size:.85rem;margin-top:4px;max-width:78ch}
+.banner{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;
+margin:14px 24px 0;font-size:.84rem;color:var(--muted)}
+.banner b{color:var(--ink)}
+.wrap{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px 24px;max-width:1500px;margin:0 auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.panel h2{margin:0 0 10px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.case{padding:9px 11px;border:1px solid var(--line);border-radius:8px;margin:5px 0;cursor:pointer}
+.case:hover{border-color:var(--line2)}.case.on{border-color:var(--accent);background:var(--card2)}
+.case b{font-family:var(--mono);font-size:.78rem;color:var(--accent)}
+.case span{display:block;color:var(--muted);font-size:.75rem;margin-top:2px;
+overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+button{font-family:var(--sans);font-weight:600;font-size:.85rem;padding:9px 16px;border-radius:8px;
+border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:var(--card);color:var(--ink);border-color:var(--line2)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:.78rem}
+.stat b{font-family:var(--mono)}
+pre{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;
+font-family:var(--mono);font-size:.77rem;white-space:pre-wrap;max-height:44vh;margin:0}
+table{border-collapse:collapse;width:100%;font-size:.77rem;font-family:var(--mono)}
+th,td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left}
+th{color:var(--muted);font-family:var(--sans);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:10px;margin-top:8px}
+.g{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:10px}
+.g .n{font-size:1.5rem;font-weight:700;font-family:var(--mono)}
+.g .k{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.g .w{font-size:.75rem;color:var(--muted);margin-top:4px}
+.muted{color:var(--muted);font-size:.82rem}
+.sp{display:inline-block;width:11px;height:11px;border:2px solid var(--line2);border-top-color:var(--accent);
+border-radius:50%;animation:s .7s linear infinite;vertical-align:-1px}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="./" class="on">Demo</a>
+  <a href="../../marketing/PRESENTATION.html">Presentation</a>
+  <a href="../../webapp/static/architecture.svg">Architecture</a>
+  <a href="https://github.com/wjlgatech/mantisgrid-track1">Repo</a>
+</div>
+<header>
+  <h1>RCA console — find why a system broke</h1>
+  <div class="sub">Pick an incident. The agent reads the telemetry and answers <b>when</b> it started,
+  <b>which</b> component caused it and <b>why</b> — then a second model, GLM-5.2, grades the evidence it wrote.</div>
+</header>
+
+<div class="banner">
+  <b>This page replays real recorded runs.</b> Every number, evidence file and grade below was produced by
+  the actual agent and a real GLM-5.2 call — nothing is mocked. It is pre-recorded because the live app
+  needs the 11 GB telemetry bundle, which cannot be hosted. For the live version:
+  <code>git clone</code> the repo, fetch the bundle, <code>make webapp</code>.
+</div>
+
+<div class="wrap">
+  <div class="panel">
+    <h2>Incidents</h2>
+    <div id="cases"><span class="muted">loading…</span></div>
+  </div>
+  <div>
+    <div class="panel" style="margin-bottom:16px">
+      <h2>Diagnosis</h2>
+      <div class="row">
+        <button id="go" disabled>Solve this case</button>
+        <button id="judge" class="ghost" disabled>Grade the evidence with GLM-5.2</button>
+        <span id="stats"></span>
+      </div>
+      <div id="out"><span class="muted">Pick an incident on the left.</span></div>
+    </div>
+    <div class="panel">
+      <h2>GLM-5.2's verdict on our evidence</h2>
+      <div id="verdict"><span class="muted">Solve a case, then grade it.</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let CASES=[], sel=null, last=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+fetch('cases.json').then(r=>r.json()).then(d=>{
+  CASES=d;
+  $('cases').innerHTML=d.map(c=>
+    `<div class="case" data-id="${c.row_id}"><b>#${c.row_id} · ${esc(c.task)}</b>
+     <span>${esc(c.instruction.slice(0,150))}</span></div>`).join('');
+  document.querySelectorAll('.case').forEach(el=>el.onclick=()=>{
+    document.querySelectorAll('.case').forEach(e=>e.classList.remove('on'));
+    el.classList.add('on'); sel=CASES.find(c=>c.row_id==el.dataset.id);
+    $('go').disabled=false; $('judge').disabled=true;
+    $('out').innerHTML='<span class="muted">Ready — press Solve.</span>';
+    $('verdict').innerHTML='<span class="muted">Solve a case, then grade it.</span>';
+    $('stats').innerHTML='';
+  });
+}).catch(e=>$('cases').innerHTML=`<span class="muted">could not load cases.json: ${esc(e)}</span>`);
+
+$('go').onclick=async()=>{
+  $('go').disabled=true;
+  $('out').innerHTML='<span class="sp"></span> reading telemetry…';
+  await wait(900);                       // replays the real recorded timing
+  const d=last=sel; $('go').disabled=false; $('judge').disabled=false;
+  $('stats').innerHTML=`<span class="stat">⏱ <b>${d.seconds}s</b></span>
+    <span class="stat">model calls <b>0</b></span><span class="stat">cost <b>$0.0000</b></span>`;
+  $('out').innerHTML=
+    `<table><thead><tr><th>onset</th><th>component</th><th>KPI</th><th>baseline</th><th>peak</th><th>z</th></tr></thead><tbody>`+
+    d.candidates.map(c=>`<tr><td>${esc(c.onset)}</td><td>${esc(c.component)}</td><td>${esc(c.kpi)}</td>
+    <td>${c.baseline}</td><td>${c.peak}</td><td>${c.z}</td></tr>`).join('')+
+    `</tbody></table><h2 style="margin-top:16px">Evidence file it wrote</h2><pre>${esc(d.evidence)}</pre>`;
+};
+
+$('judge').onclick=async()=>{
+  $('judge').disabled=true;
+  $('verdict').innerHTML='<span class="sp"></span> GLM-5.2 is reading the evidence…';
+  await wait(1400);
+  const j=last.judge||{};
+  if(j.error){$('verdict').innerHTML=`<span class="muted">${esc(j.error)}</span>`;return}
+  const g=j.grades||{};
+  const card=(k,l)=>g[k]?`<div class="g"><div class="k">${l}</div>
+    <div class="n">${esc(g[k].score)}<span class="muted" style="font-size:.78rem">/5</span></div>
+    <div class="w">${esc(g[k].why)}</div></div>`:'';
+  $('verdict').innerHTML=
+    `<div class="row"><span class="stat">judge <b>${esc(j.model)}</b></span>
+     <span class="stat">⏱ <b>${j.seconds}s</b></span><span class="stat">cost <b>$${j.usd}</b></span>
+     ${g.overall?`<span class="stat">overall <b>${esc(g.overall)}/5</b></span>`:''}</div>`+
+    (g.one_line?`<p style="margin:.3rem 0 .7rem">${esc(g.one_line)}</p>`:'')+
+    `<div class="grade">${card('grounding','Grounding')}${card('calibration','Calibration')}
+     ${card('ruled_out','Ruled out')}${card('actionability','Actionability')}</div>`;
+  $('judge').disabled=false;
+};
+</script>
+</body>
+</html>
