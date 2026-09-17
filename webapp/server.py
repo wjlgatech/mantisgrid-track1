@@ -25,7 +25,8 @@ from pathlib import Path
 
 import pandas as pd
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -39,6 +40,20 @@ QUERIES = DATASET / "dev" / "query_dev.csv"
 JUDGE_MODELS = ["zai-org/GLM-5.2", "zai-org/GLM-5.1"]
 
 app = FastAPI(title="RCA console")
+HERE = Path(__file__).resolve().parent
+app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
+
+
+@app.get("/presentation", response_class=HTMLResponse)
+def presentation():
+    """The four-minute deck, served from the same app as the demo it describes."""
+    return (ROOT / "marketing" / "PRESENTATION.html").read_text()
+
+
+@app.get("/architecture", response_class=HTMLResponse)
+def architecture():
+    """The animated architecture + bottleneck figures."""
+    return (HERE / "architecture.html").read_text()
 
 
 def _cases() -> pd.DataFrame:

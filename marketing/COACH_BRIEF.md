@@ -1,5 +1,11 @@
 # Coach brief — 2 minutes to read
 
+> **See it animated:** `make webapp` → **[How it works](http://127.0.0.1:8100/architecture)** ·
+> **[Presentation](http://127.0.0.1:8100/presentation)** · **[Console](http://127.0.0.1:8100/)**
+> — the SVGs below animate live there; GitHub shows them as stills.
+
+![Architecture](../webapp/static/architecture.png)
+
 ## What we built
 
 A **deterministic detector**, no model in the judged path.
@@ -29,6 +35,8 @@ So GLM sits where there is **no deterministic scorer**: grading our free-text ev
 quality had nothing but our own assertion.
 
 ## The bottleneck, precisely
+
+![Where the accuracy goes](../webapp/static/bottleneck.png)
 
 **It is re-ranking. Retrieval is solved.**
 

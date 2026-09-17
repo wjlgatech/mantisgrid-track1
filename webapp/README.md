@@ -38,6 +38,14 @@ actionability 3/5, in 15.7s for $0.0048:
 Every cost shown in the UI is priced at the published table in `cost.py`, from the
 usage Featherless actually returned.
 
+## Pages
+
+| | |
+|---|---|
+| `/` | the console — solve a case, then have GLM grade it |
+| `/architecture` | **animated** architecture + the bottleneck infographic |
+| `/presentation` | the four-minute deck, arrow keys, with a 4:00 timer |
+
 ## Endpoints
 
 | | |

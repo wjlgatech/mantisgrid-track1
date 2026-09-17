@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="470" viewBox="0 0 1160 470" font-family="Poppins,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect width="1160" height="470" fill="#faf9f5"/>
+  <text x="40" y="44" font-size="13" font-weight="700" letter-spacing="2.6" fill="#d97757">WHERE THE ACCURACY GOES — AND WHERE IT IS STUCK NOW</text>
+
+  <text x="40" y="86" font-size="12" font-weight="700" letter-spacing="1.4" fill="#5c5b57">v1 — 46% OF ANSWERS WERE UNSAYABLE</text>
+  <rect x="40" y="98" width="480" height="34" rx="6" fill="#f0eee6" stroke="#e3e0d6"/>
+  <rect x="40" y="98" width="258" height="34" rx="6" fill="#d97757" opacity=".85">
+    <animate attributeName="width" values="0;258" dur="1.1s" fill="freeze"/></rect>
+  <text x="56" y="120" font-size="13" font-weight="700" fill="#fff">in our list 53.7%</text>
+  <text x="530" y="120" font-size="12" fill="#5c5b57">service-level names were never produced — ceiling 56%</text>
+
+  <rect x="40" y="142" width="480" height="34" rx="6" fill="#f0eee6" stroke="#e3e0d6"/>
+  <rect x="40" y="142" width="71" height="34" rx="6" fill="#141413">
+    <animate attributeName="width" values="0;71" dur="1.1s" begin="0.3s" fill="freeze"/></rect>
+  <text x="124" y="164" font-size="13" font-weight="700" fill="#141413">picked it: 14.8%</text>
+
+  <text x="40" y="224" font-size="12" font-weight="700" letter-spacing="1.4" fill="#5c5b57">v2 — WE ADDED metric_service.csv (1 MB/DAY)</text>
+  <rect x="40" y="236" width="480" height="34" rx="6" fill="#f0eee6" stroke="#e3e0d6"/>
+  <rect x="40" y="236" width="462" height="34" rx="6" fill="#788c5d">
+    <animate attributeName="width" values="0;462" dur="1.4s" begin="0.8s" fill="freeze"/></rect>
+  <text x="56" y="258" font-size="13" font-weight="700" fill="#fff">in our list 96.3%</text>
+  <text x="530" y="258" font-size="12" fill="#788c5d" font-weight="700">retrieval: solved</text>
+
+  <rect x="40" y="280" width="480" height="34" rx="6" fill="#f0eee6" stroke="#e3e0d6"/>
+  <rect x="40" y="280" width="187" height="34" rx="6" fill="#6a9bcc" opacity=".55">
+    <animate attributeName="width" values="0;187" dur="1.4s" begin="1.1s" fill="freeze"/></rect>
+  <rect x="40" y="280" width="80" height="34" rx="6" fill="#141413">
+    <animate attributeName="width" values="0;80" dur="1.4s" begin="1.4s" fill="freeze"/></rect>
+  <text x="240" y="302" font-size="13" fill="#141413"><tspan font-weight="700">recall@1 16.7%</tspan> · recall@3 38.9%</text>
+  <text x="530" y="302" font-size="12" font-weight="700" fill="#d97757">← the answer is in our top 3, we pick the wrong one</text>
+
+  <rect x="40" y="344" width="1080" height="96" rx="10" fill="#fff" stroke="#d97757" stroke-width="2"/>
+  <text x="62" y="372" font-size="14" font-weight="700" fill="#141413">The blocker: we cannot merge sensors whose scores are not comparable</text>
+  <text x="62" y="396" font-size="12" fill="#5c5b57">Traces lift the 12 network cases 0.111 → 0.194 (+75%) — the same rule costs the other 58 more than that.</text>
+  <text x="62" y="416" font-size="12" fill="#5c5b57">Service metrics reached 96.3% — and took 68% of rank-1 slots while being 44% of answers. Both shelved.</text>
+  <circle cx="1090" cy="392" r="8" fill="#d97757"><animate attributeName="opacity" values="1;.25;1" dur="1.6s" repeatCount="indefinite"/></circle>
+</svg>
