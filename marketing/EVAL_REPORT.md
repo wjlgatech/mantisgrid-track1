@@ -174,9 +174,15 @@ handed the ranked candidate table, changed **0 of 20 answers** while spending $0
 8.2 minutes. With reasoning off it changed all 20 and scored lower, though at n=20 that
 score gap is not significant.
 
-**The caveat we do not bury:** this tests a model *choosing from a static table*. We
-never gave it tools to query the telemetry itself. That is a different system and our
-result says nothing about it.
+**Replicated on a better table.** We later found that 44% of correct answers were
+unreachable by our code and fixed it (`marketing/V1_VS_V2.md`), which raised reachability
+from 53.7% to 96.3%. We re-ran the model on that table expecting it to finally pay.
+**It changed 0 of 20 answers again.** The model is not information-starved; it anchors on
+the order of the list we hand it. Two independent runs, same result.
+
+**The caveat we do not bury:** both runs test a model *choosing from a pre-sorted table*.
+We never gave it tools to query telemetry itself, and never removed the ordering signal.
+Those are different systems and our result says nothing about them.
 
 ---
 
