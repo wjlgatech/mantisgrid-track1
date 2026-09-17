@@ -14,326 +14,237 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
-.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
-  padding:6vh 9vw;animation:in .3s ease}
-.slide.on{display:flex}
-@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.eyebrow{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
-  font-weight:700;margin-bottom:1rem}
-h1{font-size:clamp(2rem,4.8vw,3.4rem);line-height:1.1;margin:0 0 1.2rem;letter-spacing:-.02em;text-wrap:balance}
-h2{font-size:clamp(1.3rem,2.6vw,1.9rem);margin:0 0 .9rem;line-height:1.2}
-p{font-size:clamp(1.05rem,1.7vw,1.35rem);line-height:1.6;margin:.6rem 0;max-width:46ch;color:var(--ink)}
-p.q{color:var(--muted)}
-.big{font-family:var(--mono);font-size:clamp(2.6rem,8vw,5.5rem);font-weight:700;letter-spacing:-.03em;line-height:1}
-.sub{font-size:1rem;color:var(--muted);margin-top:.5rem;max-width:48ch}
-.three{display:flex;gap:2.2rem;flex-wrap:wrap;margin:1.2rem 0}
-.three div{font-size:clamp(1.1rem,2vw,1.5rem);font-weight:700}
-.three span{display:block;font-size:.8rem;color:var(--muted);font-weight:400;margin-top:.2rem}
-table{border-collapse:collapse;font-size:clamp(.88rem,1.4vw,1.1rem);margin-top:.6rem}
-th,td{border-bottom:1px solid var(--line);padding:.55rem 1rem;text-align:left}
-th{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-td.n{font-family:var(--mono);font-weight:700}
-tr.hi{background:var(--card2)}
-.map td:first-child{color:var(--ink);font-weight:600}
-.map td:last-child{color:var(--muted);font-family:var(--mono);font-size:.92em}
-.say{margin-top:1.5rem;padding:.9rem 1.2rem;background:var(--card);border-left:3px solid var(--accent);
-  border-radius:0 8px 8px 0;font-size:.95rem;max-width:62ch}
-.say b{color:var(--accent);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:.3rem}
-.do{font-family:var(--mono);font-size:.9rem;color:var(--green);font-weight:700;margin:.6rem 0}
+.slide{position:absolute;inset:0;display:none;grid-template-columns:1fr 1fr;gap:3vw;
+  align-items:center;padding:7vh 6vw}
+.slide.on{display:grid}
+@media(max-width:950px){.slide.on{grid-template-columns:1fr;padding:4vh 6vw;align-content:center}
+  .art{display:none}}
+.tag{font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.08;margin:.6rem 0 1rem;letter-spacing:-.025em;text-wrap:balance}
+p{font-size:clamp(1.05rem,1.55vw,1.3rem);line-height:1.55;margin:.7rem 0;max-width:42ch}
+.dim{color:var(--muted)}
+.punch{font-size:clamp(1.15rem,1.8vw,1.45rem);font-weight:700;line-height:1.35;margin-top:1.1rem}
+.nums{display:flex;gap:2rem;margin-top:1.4rem;flex-wrap:wrap}
+.nums div{font-family:var(--mono);font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:700;line-height:1}
+.nums span{display:block;font-family:var(--sans);font-size:.76rem;color:var(--muted);font-weight:400;margin-top:.35rem}
+.art{width:100%}
+svg{width:100%;height:auto;display:block}
 nav{position:fixed;bottom:16px;right:20px;display:flex;gap:8px;align-items:center;z-index:9}
-nav button{font-family:var(--sans);font-weight:600;font-size:.8rem;padding:6px 12px;border-radius:7px;
+nav button{font-family:var(--sans);font-weight:600;font-size:.8rem;padding:6px 13px;border-radius:7px;
   border:1px solid #b0aea5;background:var(--card);cursor:pointer}
-#clock{position:fixed;bottom:16px;left:20px;font-family:var(--mono);font-size:.8rem;color:var(--muted);z-index:9}
-#bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);transition:width .25s}
+#clock{position:fixed;bottom:18px;left:20px;font-family:var(--mono);font-size:.8rem;color:var(--muted);z-index:9}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);transition:width .3s}
+.foot{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);font-size:.74rem;color:var(--muted);z-index:8}
 </style>
 </head>
 <body>
 <div id="bar"></div>
 
-<!-- 1 -->
+<!-- ══ 1 · WHAT ══ -->
 <section class="slide on">
-  <div class="eyebrow">MantisGrid 2026 · Track 1</div>
-  <h1>A restaurant is running thirty minutes late.</h1>
-  <p>Somebody hands you a box. Inside is <strong>everything that happened that night</strong> —
-  every temperature reading from every stove, every cook's notes, every order slip.</p>
-  <p>Enough paper to fill a room. For <strong>half an hour</strong> of one bad evening.</p>
-  <div class="say"><b>say</b>
-    "No computers in this story yet. Just a box of paper and a manager who wants answers."</div>
-</section>
-
-<!-- 2 -->
-<section class="slide">
-  <div class="eyebrow">The job</div>
-  <h1>Three questions.</h1>
-  <div class="three">
-    <div>When did it start?<span>not when you noticed — when it began</span></div>
-    <div>Which station?<span>which one actually caused it</span></div>
-    <div>Why?<span>what went wrong there</span></div>
-  </div>
-  <p>And here is the trap. When one station jams, <strong>every station after it jams too.</strong>
-  The ones closest to the customer complain the loudest.</p>
-  <p><strong>The loudest complaint is almost never the one that started it.</strong></p>
-  <div class="say"><b>say</b>
-    "Twelve stations are shouting. One of them caused it. That's the whole problem."</div>
-</section>
-
-<!-- 3 -->
-<section class="slide">
-  <div class="eyebrow">What we built</div>
-  <h1>A machine that reads the whole box in one second.</h1>
-  <p>For every stove, it asks one question: <strong>"Did this run hotter tonight than it
-  normally does?"</strong> Then it ranks them.</p>
-  <p>It writes its answer down like a report — with the actual numbers it saw, and the
-  other stoves it considered and dropped.</p>
-  <div class="big">0.073 → 0.199</div>
-  <div class="sub">2.7× better than the starting point we were given. One second per case. Costs nothing.</div>
-  <div class="say"><b>say</b>
-    "For scale: the best published attempt at this problem gets about one case in nine.
-    This is not a solved problem, and most of what I'll show you is what we learned."</div>
-</section>
-
-<!-- 4 -->
-<section class="slide">
-  <div class="eyebrow">Win #1</div>
-  <h1>The biggest win was a clock.</h1>
-  <p>Every timestamp in the box was written in <strong>Beijing time</strong>.
-  We were reading them as <strong>London time</strong>.</p>
-  <p>Eight hours off. So for anything that happened after 4pm, we were looking past the
-  end of the night — at <strong>nothing at all</strong>.</p>
-  <p>On <strong>24 cases out of 70</strong>, we handed in a blank answer and didn't know it.</p>
-  <p><strong>One line of code fixed it.</strong> It was worth more than every clever idea we had.</p>
-  <div class="say"><b>say</b>
-    "We're opening with our most embarrassing bug on purpose. It was the single largest
-    improvement available, and we'd have missed it if we hadn't checked the basics."</div>
-</section>
-
-<!-- 5 -->
-<section class="slide">
-  <div class="eyebrow">Win #2 · live demo</div>
-  <h1>Watch it work.</h1>
-  <div class="do">make webapp → pick a case → Solve</div>
-  <p>Three seconds. Then open what it wrote and look at two things:</p>
-  <p>① <strong>Every number is one it actually measured.</strong> Nothing is made up.<br>
-     ② <strong>It argues against itself.</strong> It says: "this other station started moving
-     nine minutes <em>earlier</em> than my answer — so I might be wrong."</p>
-  <div class="do">→ then click "Grade the evidence"</div>
-  <p>A <strong>second machine reads our report and marks it</strong>. It gave us
-  <strong>3 out of 5</strong> on "would this actually help someone at 3am." <strong>It marked us down.</strong>
-  We left that in.</p>
-  <div class="say"><b>say</b>
-    "A report you can't check is worth nothing. So every number in ours is traceable, and
-    we let something else grade it — and publish the bad grade."</div>
-</section>
-
-<!-- 6 -->
-<section class="slide">
-  <div class="eyebrow">Win #3 — the one we're proudest of</div>
-  <h1>When our machine is <em>sure</em>, it's usually <em>wrong</em>.</h1>
-  <table>
-    <tr><th>it told us</th><th>how often it was right</th></tr>
-    <tr><td>"I'm confident"</td><td class="n">1 time in 10</td></tr>
-    <tr class="hi"><td><strong>"I'm not sure"</strong></td><td class="n"><strong>1 time in 3</strong></td></tr>
-  </table>
-  <p class="sub">Three times better when it doubts itself. We checked — this isn't luck.</p>
-  <p>Normally you'd say: <em>"when the machine isn't sure, ask a human."</em>
-  <strong>That would have been exactly backwards.</strong> Humans would get the easy ones,
-  and the mistakes would sail through.</p>
-  <div class="say"><b>say</b>
-    "This is the finding we'd take to any other project. It's not about restaurants."</div>
-</section>
-
-<!-- 7 -->
-<section class="slide">
-  <div class="eyebrow">Why it happens</div>
-  <h1>A tidy picture means two different things.</h1>
-  <p>Our machine says <strong>"I'm confident"</strong> when the picture is clean — one stove clearly
-  hottest, nothing else moving.</p>
-  <p>But a clean picture also happens when <strong>the fire is somewhere a thermometer can't
-  reach.</strong></p>
-  <p><strong>From inside the thermometer, those two look identical.</strong></p>
-  <p class="sub">A quarter of the real problems here were never going to show up on a
-  thermometer at all. They were on the order slips, and we were reading thermometers.</p>
-  <div class="say"><b>say</b>
-    "A doctor reading only a blood test can be completely certain and completely wrong,
-    and the blood test will never warn them. Only an X-ray will."</div>
-</section>
-
-<!-- 8 -->
-<section class="slide">
-  <div class="eyebrow">What we tried that didn't work</div>
-  <h1>We asked an AI to pick the answer. Twice. It just agreed with us.</h1>
-  <table>
-    <tr><th>we gave the AI</th><th>answers it changed</th></tr>
-    <tr><td>our ranked list of suspects</td><td class="n">0 out of 20</td></tr>
-    <tr class="hi"><td>a much better list</td><td class="n"><strong>0 out of 20</strong></td></tr>
-  </table>
-  <p>Hand it a list that's already sorted and it takes the top one and explains why.
-  It wasn't thinking — it was <strong>agreeing</strong>.</p>
-  <p>So we don't use it to pick. <strong>We use it to grade our homework</strong> — the one job
-  where no simple rule can do the checking.</p>
-  <div class="say"><b>say</b>
-    "It cost eight minutes of a twenty-minute budget to agree with us. So we stopped."</div>
-</section>
-
-<!-- 9 -->
-<section class="slide">
-  <div class="eyebrow">Being honest</div>
-  <h1>Two things we thought we'd discovered turned out to be luck.</h1>
-  <p>We only had <strong>70 cases</strong>. With that few, a small improvement and a lucky streak
-  look the same.</p>
-  <p>So we did the maths properly. Two of our own findings came back as <strong>"could easily be
-  chance."</strong> We took them back out of the report.</p>
-  <p>We'll also tell you: <strong>a third of our score</strong> depends on a list of keywords we wrote
-  by hand. If the next system names things differently, that third gets worse. We're saying
-  it rather than letting you find it.</p>
-  <div class="say"><b>say</b>
-    "We'd rather show you the retraction than have you wonder what we didn't check."</div>
-</section>
-
-<!-- 10 -->
-<section class="slide">
-  <div class="eyebrow">The map — story to real thing</div>
-  <h2>Everything I just said, in the real words</h2>
-  <table class="map">
-    <tr><th>in the story</th><th>what it really is</th></tr>
-    <tr><td>One stove</td><td>a container (one copy of one service)</td></tr>
-    <tr><td>The building's gas main</td><td>a node (the machine they share)</td></tr>
-    <tr><td>A whole station</td><td>a service</td></tr>
-    <tr><td>Temperature readings</td><td>metrics — CPU, memory, disk</td></tr>
-    <tr><td>An order slip, stamped at each station</td><td>a trace — spans with timings</td></tr>
-    <tr class="hi"><td><strong>First wisp of smoke</strong></td><td><strong>onset — how we date it</strong></td></tr>
-    <tr class="hi"><td><strong>The fire alarm</strong></td><td><strong>peak — how we pick it</strong></td></tr>
-    <tr><td>"Hotter than it normally runs"</td><td>robust z-score vs the rest of that day</td></tr>
-    <tr><td>The written report</td><td>the evidence file</td></tr>
-    <tr><td>The second machine that grades it</td><td>GLM-5.2, as judge</td></tr>
-  </table>
-  <div class="say"><b>say</b>
-    "Smoke tells you <em>when</em>. The alarm tells you <em>which</em>. Those are different
-    questions and we answer them with different signals — that's the core design."</div>
-</section>
-
-<!-- 11 -->
-<section class="slide">
-  <div class="eyebrow">Close</div>
-  <h1>Three of our four findings are negative.</h1>
-  <p>One is us taking back our own claim.</p>
-  <p>On a problem where the best published attempt solves one case in nine,
-  <strong>a team that only reports wins is a team that didn't look.</strong></p>
-  <div class="three" style="margin-top:1.4rem">
-    <div>0.199<span>from 0.073</span></div>
-    <div>1 second<span>per case</span></div>
-    <div>$0.00<span>to run</span></div>
-  </div>
-  <div class="say"><b>say</b>
-    "These are the findings we'd want in the room at 3am, when something is actually broken."</div>
-</section>
-
-<!-- 12 — Q&A backup -->
-<section class="slide">
-  <div class="eyebrow">Backup · if they ask</div>
-  <h2>The three questions, answered in the story</h2>
-  <p class="q"><strong>"Why is there no AI in the judged run? This is the AI track."</strong><br>
-  We hired the chef twice and both times he read our shortlist and said "yes, the first one."
-  Zero of twenty changed. He wasn't short of information — the second time our shortlist held
-  the right answer 96% of the time and he still just agreed. He anchors on the order we hand
-  him. <span style="color:var(--muted)">(GLM-5.2, reasoning on, 0/20 twice; harness in the repo,
-  <code>make compare</code>.)</span></p>
-
-  <p class="q"><strong>"So where does the AI earn its place?"</strong><br>
-  Grading the report. Whether a stove was hot is arithmetic — no opinion needed. Whether a
-  <em>write-up</em> is any good is judgement, and nothing simple can check that. So that's the
-  one job it has. <span style="color:var(--muted)">(Accuracy has a deterministic scorer;
-  evidence quality had none.)</span></p>
-
-  <p class="q"><strong>"Will it work on a restaurant you've never seen?"</strong><br>
-  Two thirds of it will — "was this stove hotter than usual <em>tonight</em>" needs no prior
-  knowledge of that kitchen. One third won't travel as well: the part that turns "hot stove"
-  into "why" is a keyword list we wrote by hand.
-  <span style="color:var(--muted)">(Component and time come from a per-case statistic;
-  reason comes from a 19-entry map. Constants were tuned on all 70 — that's leakage, stated.)</span></p>
-</section>
-
-<!-- 13 — appendix: FAQ -->
-<section class="slide">
-  <div class="eyebrow">Appendix A · questions we get asked</div>
-  <h2>FAQ</h2>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:.4rem">
-    <div>
-      <p style="font-size:1rem"><strong>"Is one second per case realistic?"</strong><br>
-      <span style="color:var(--muted);font-size:.92rem">Yes — it reads only the half-hour that
-      matters, not the whole night. 20 cases finish in 1.2 minutes of a 20-minute budget.</span></p>
-
-      <p style="font-size:1rem"><strong>"How do you know the report isn't made up?"</strong><br>
-      <span style="color:var(--muted);font-size:.92rem">Every number is carried straight from the
-      measurement that produced it. No model is ever asked to remember a number.</span></p>
-
-      <p style="font-size:1rem"><strong>"Why is it right only 1 in 5 times?"</strong><br>
-      <span style="color:var(--muted);font-size:.92rem">The best published attempt manages 1 in 9.
-      Nobody has solved this. We're 2.7× better than where we started.</span></p>
+  <div>
+    <div class="tag">What</div>
+    <h1>Twelve stations are shouting.<br>One of them started it.</h1>
+    <p>When a system breaks, everything downstream breaks too — and the parts
+    nearest the customer scream loudest.</p>
+    <p class="dim">So the loudest alarm is almost never the cause. Finding the real one
+    means reading a room's worth of data from one bad half-hour.</p>
+    <p class="punch">We built a machine that reads all of it in one second and says
+    <em>when</em>, <em>which</em>, and <em>why</em>.</p>
+    <div class="nums">
+      <div>0.073→0.199<span>2.7× the starting point</span></div>
+      <div>1 sec<span>per incident</span></div>
+      <div>$0.00<span>to run</span></div>
     </div>
-    <div>
-      <p style="font-size:1rem"><strong>"Where's the AI, in an AI competition?"</strong><br>
-      <span style="color:var(--muted);font-size:.92rem">We tested it as the decision-maker twice.
-      It changed 0 of 20 answers both times — it just agreed with our list. So it grades our report
-      instead, which is the job no simple rule can do.</span></p>
-
-      <p style="font-size:1rem"><strong>"Will it work somewhere new?"</strong><br>
-      <span style="color:var(--muted);font-size:.92rem">Two thirds will — "hotter than usual
-      tonight" needs no prior knowledge. One third is a hand-written keyword list that may not
-      travel. We're saying so.</span></p>
-
-      <p style="font-size:1rem"><strong>"What's the catch?"</strong><br>
-      <span style="color:var(--muted);font-size:.92rem">We tuned it while looking at all 70
-      practice cases. On unseen ones it will score lower. That's stated in the report.</span></p>
-    </div>
+  </div>
+  <div class="art">
+    <svg viewBox="0 0 560 420" role="img" aria-label="One station fails and the failure cascades to the others">
+      <text x="0" y="16" font-size="13" font-weight="700" letter-spacing="2" fill="#5c5b57" font-family="Poppins,sans-serif">THE CASCADE</text>
+      <!-- culprit -->
+      <g>
+        <rect x="18" y="52" width="92" height="92" rx="12" fill="#fff" stroke="#d97757" stroke-width="3"/>
+        <text x="64" y="104" text-anchor="middle" font-size="34" font-family="Poppins,sans-serif">🔥</text>
+        <text x="64" y="166" text-anchor="middle" font-size="14" font-weight="700" fill="#d97757" font-family="Poppins,sans-serif">started it</text>
+        <text x="64" y="186" text-anchor="middle" font-size="12" fill="#5c5b57" font-family="Poppins,sans-serif">barely a whisper</text>
+        <circle cx="64" cy="98" r="54" fill="none" stroke="#d97757" stroke-width="2" opacity="0">
+          <animate attributeName="r" values="46;66" dur="2.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".7;0" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <!-- victims, each louder and later -->
+      <g font-family="Poppins,sans-serif">
+        <rect x="150" y="62" width="76" height="76" rx="11" fill="#f0eee6" stroke="#e3e0d6">
+          <animate attributeName="stroke" values="#e3e0d6;#b0aea5;#e3e0d6" dur="2.6s" begin="0.5s" repeatCount="indefinite"/></rect>
+        <text x="188" y="108" text-anchor="middle" font-size="26">😐</text>
+        <rect x="250" y="56" width="86" height="88" rx="11" fill="#f0eee6" stroke="#e3e0d6">
+          <animate attributeName="stroke" values="#e3e0d6;#b0aea5;#e3e0d6" dur="2.6s" begin="0.9s" repeatCount="indefinite"/></rect>
+        <text x="293" y="108" text-anchor="middle" font-size="30">😟</text>
+        <rect x="360" y="46" width="96" height="108" rx="11" fill="#fff" stroke="#d97757" stroke-width="2">
+          <animate attributeName="stroke-width" values="2;5;2" dur="2.6s" begin="1.3s" repeatCount="indefinite"/></rect>
+        <text x="408" y="112" text-anchor="middle" font-size="40">😱</text>
+        <text x="408" y="176" text-anchor="middle" font-size="14" font-weight="700" fill="#141413">LOUDEST</text>
+        <text x="408" y="196" text-anchor="middle" font-size="12" fill="#5c5b57">but innocent</text>
+      </g>
+      <!-- cascade arrows -->
+      <g stroke="#b0aea5" stroke-width="2" fill="none">
+        <path d="M 114 98 L 146 98"/><path d="M 230 98 L 246 98"/><path d="M 340 98 L 356 98"/>
+      </g>
+      <circle r="5" fill="#d97757">
+        <animateMotion dur="2.6s" repeatCount="indefinite" path="M 114 98 L 452 98"/>
+        <animate attributeName="opacity" values="1;1;0" dur="2.6s" repeatCount="indefinite"/>
+      </circle>
+      <!-- the search -->
+      <rect x="18" y="238" width="438" height="72" rx="12" fill="#fff" stroke="#e3e0d6"/>
+      <text x="38" y="268" font-size="15" font-weight="700" fill="#141413" font-family="Poppins,sans-serif">Where everyone looks 👉</text>
+      <text x="38" y="292" font-size="14" fill="#5c5b57" font-family="Poppins,sans-serif">the loudest one. Which is the last one to break.</text>
+      <rect x="18" y="238" width="438" height="72" rx="12" fill="none" stroke="#d97757" stroke-width="2" opacity="0">
+        <animate attributeName="opacity" values="0;.9;0" dur="2.6s" begin="1.6s" repeatCount="indefinite"/></rect>
+      <text x="18" y="356" font-size="15" font-weight="700" fill="#788c5d" font-family="Poppins,sans-serif">We look for who moved FIRST.</text>
+      <text x="18" y="382" font-size="14" fill="#5c5b57" font-family="Poppins,sans-serif">Every dial, compared to how it normally behaves.</text>
+    </svg>
   </div>
 </section>
 
-<!-- 14 — appendix: next -->
+<!-- ══ 2 · WHY ══ -->
 <section class="slide">
-  <div class="eyebrow">Appendix B · with more time</div>
-  <h2>What we'd build next</h2>
-  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:1.6rem;align-items:center;margin-top:.4rem">
-    <div>
-      <img src="../webapp/static/bottleneck.png" alt="where the accuracy is stuck"
-        style="width:100%;border:1px solid var(--line);border-radius:10px">
-    </div>
-    <div>
-      <p style="font-size:1rem"><strong>1. Read the order slips.</strong><br>
-      <span style="color:var(--muted);font-size:.93rem">A quarter of the problems never show on a
-      thermometer — they're on the slips. We built that reader and it found them
-      <strong>75% better</strong>. But it also shouted over the thermometers on every other case,
-      so we switched it off. We need a referee that decides <em>which one gets to speak</em>.</span></p>
-
-      <p style="font-size:1rem"><strong>2. Pick from the shortlist properly.</strong><br>
-      <span style="color:var(--muted);font-size:.93rem">The right answer is in our top three
-      <strong>39%</strong> of the time, and we pick the wrong one of the three. Fixing just that
-      would more than double this number.</span></p>
-
-      <p style="font-size:1rem"><strong>3. Let the AI name the <em>why</em>.</strong><br>
-      <span style="color:var(--muted);font-size:.93rem">It's a 15-way multiple choice with the
-      options printed on the page. Unlike our shortlist, there's no order for it to copy — which is
-      exactly why we think it would help there. <strong>Ten lines. Untested.</strong></span></p>
-    </div>
+  <div>
+    <div class="tag">Why it matters</div>
+    <h1>When our machine is <em>sure</em>, it's usually <em>wrong</em>.</h1>
+    <p>It writes down how confident it is on every case. We checked whether that
+    meant anything.</p>
+    <p class="punch">It's backwards. <span class="dim" style="font-weight:400">Three times
+    more accurate when it doubts itself. We tested it — this isn't luck.</span></p>
+    <p>Everyone builds the same safety net: <em>"if the machine isn't sure, ask a human."</em>
+    Here that hands people the easy ones and lets the mistakes through.</p>
+    <p class="punch">A clean picture means "nothing's wrong" —<br>or "the fire is somewhere
+    I can't see."</p>
+    <p class="dim">From inside the thermometer, those look identical.</p>
   </div>
-  <div class="say"><b>say</b>
-    "All three are things we found and couldn't finish, not things we haven't thought about.
-    The first one is already written and switched off on purpose."</div>
+  <div class="art">
+    <svg viewBox="0 0 560 420" role="img" aria-label="Confidence is inverted: confident cases are less accurate">
+      <text x="0" y="16" font-size="13" font-weight="700" letter-spacing="2" fill="#5c5b57" font-family="Poppins,sans-serif">HOW OFTEN IT WAS ACTUALLY RIGHT</text>
+      <g font-family="Poppins,sans-serif">
+        <text x="0" y="66" font-size="16" font-weight="700" fill="#141413">"I'm confident"</text>
+        <rect x="0" y="80" width="430" height="46" rx="8" fill="#f0eee6" stroke="#e3e0d6"/>
+        <rect x="0" y="80" width="0" height="46" rx="8" fill="#b0aea5">
+          <animate attributeName="width" values="0;43" dur="1.3s" fill="freeze"/></rect>
+        <text x="60" y="110" font-size="17" font-weight="700" fill="#141413" opacity="0">1 time in 10
+          <animate attributeName="opacity" values="0;1" dur=".5s" begin="1.2s" fill="freeze"/></text>
+
+        <text x="0" y="182" font-size="16" font-weight="700" fill="#141413">"I'm not sure"</text>
+        <rect x="0" y="196" width="430" height="46" rx="8" fill="#f0eee6" stroke="#e3e0d6"/>
+        <rect x="0" y="196" width="0" height="46" rx="8" fill="#d97757">
+          <animate attributeName="width" values="0;143" dur="1.3s" begin=".35s" fill="freeze"/></rect>
+        <text x="160" y="226" font-size="17" font-weight="700" fill="#141413" opacity="0">1 time in 3
+          <animate attributeName="opacity" values="0;1" dur=".5s" begin="1.6s" fill="freeze"/></text>
+      </g>
+      <!-- the inversion callout -->
+      <g opacity="0"><animate attributeName="opacity" values="0;1" dur=".6s" begin="2.1s" fill="freeze"/>
+        <path d="M 455 100 C 510 100 510 220 455 220" stroke="#d97757" stroke-width="2.5" fill="none"/>
+        <path d="M 455 220 l 9 -5 v 10 z" fill="#d97757"/>
+        <text x="470" y="150" font-size="14" font-weight="700" fill="#d97757" font-family="Poppins,sans-serif">3×</text>
+        <text x="463" y="170" font-size="12" fill="#5c5b57" font-family="Poppins,sans-serif">worse</text>
+        <text x="466" y="186" font-size="12" fill="#5c5b57" font-family="Poppins,sans-serif">when</text>
+        <text x="463" y="202" font-size="12" fill="#5c5b57" font-family="Poppins,sans-serif">sure</text>
+      </g>
+      <!-- blind spot -->
+      <rect x="0" y="280" width="540" height="120" rx="12" fill="#fff" stroke="#e3e0d6"/>
+      <text x="24" y="312" font-size="15" font-weight="700" fill="#141413" font-family="Poppins,sans-serif">Why a clean picture fools it</text>
+      <g font-family="Poppins,sans-serif">
+        <text x="24" y="344" font-size="32">🌡️</text>
+        <text x="70" y="342" font-size="14" fill="#5c5b57">thermometer says: all normal</text>
+        <text x="70" y="366" font-size="14" fill="#5c5b57">…because the fire is in a room</text>
+        <text x="70" y="388" font-size="14" fill="#5c5b57">it cannot reach</text>
+        <text x="470" y="352" font-size="34" opacity=".25">🔥
+          <animate attributeName="opacity" values=".15;.9;.15" dur="2.4s" repeatCount="indefinite"/></text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ══ 3 · HOW ══ -->
+<section class="slide">
+  <div>
+    <div class="tag">How</div>
+    <h1>It measures. Then something else grades it.</h1>
+    <p>For every dial: <strong>"is this unusual <em>for this machine</em>, tonight?"</strong>
+    Rank them, date the earliest move, write a report.</p>
+    <p class="punch">Every number in that report is one it measured.<br>
+    <span class="dim" style="font-weight:400">Nothing invented — a made-up detail sends
+    someone chasing nothing at 3am.</span></p>
+    <p>Then a <strong>second AI reads the report and marks it</strong>. It gave us
+    <strong>3 out of 5</strong> on "would this help someone at 3am."</p>
+    <p class="dim">We published the bad grade. We also tested the AI as the
+    <em>decision-maker</em> — twice — and it changed <strong>0 of 20</strong> answers,
+    so it doesn't get that job.</p>
+  </div>
+  <div class="art">
+    <svg viewBox="0 0 560 420" role="img" aria-label="Pipeline: read, rank, report, then graded by a second AI">
+      <text x="0" y="16" font-size="13" font-weight="700" letter-spacing="2" fill="#5c5b57" font-family="Poppins,sans-serif">ONE SECOND, END TO END</text>
+      <g font-family="Poppins,sans-serif">
+        <rect x="0" y="44" width="122" height="66" rx="10" fill="#fff" stroke="#e3e0d6"/>
+        <text x="61" y="76" text-anchor="middle" font-size="24">📦</text>
+        <text x="61" y="98" text-anchor="middle" font-size="12" fill="#5c5b57">the whole night</text>
+
+        <rect x="162" y="44" width="122" height="66" rx="10" fill="#fff" stroke="#e3e0d6"/>
+        <text x="223" y="76" text-anchor="middle" font-size="24">📏</text>
+        <text x="223" y="98" text-anchor="middle" font-size="12" fill="#5c5b57">unusual for it?</text>
+
+        <rect x="324" y="44" width="122" height="66" rx="10" fill="#fff" stroke="#d97757" stroke-width="2"/>
+        <text x="385" y="76" text-anchor="middle" font-size="24">🥇</text>
+        <text x="385" y="98" text-anchor="middle" font-size="12" fill="#5c5b57">rank + date it</text>
+
+        <g stroke="#b0aea5" stroke-width="2"><path d="M 126 77 L 158 77"/><path d="M 288 77 L 320 77"/></g>
+        <circle r="5" fill="#d97757"><animateMotion dur="2.2s" repeatCount="indefinite" path="M 126 77 L 320 77"/></circle>
+
+        <!-- report -->
+        <path d="M 385 114 L 385 146" stroke="#b0aea5" stroke-width="2"/>
+        <path d="M 385 146 l -5 -9 h 10 z" fill="#b0aea5"/>
+        <rect x="150" y="152" width="270" height="118" rx="10" fill="#fff" stroke="#e3e0d6"/>
+        <text x="170" y="178" font-size="13" font-weight="700" fill="#141413">THE REPORT</text>
+        <text x="170" y="202" font-size="12" fill="#5c5b57">station · what moved · when</text>
+        <text x="170" y="224" font-size="12" fill="#5c5b57">normal reading vs tonight's</text>
+        <text x="170" y="246" font-size="12" fill="#788c5d">…and what it ruled out, and why</text>
+        <rect x="150" y="152" width="270" height="118" rx="10" fill="none" stroke="#788c5d" stroke-width="2" opacity="0">
+          <animate attributeName="opacity" values="0;.8;0" dur="2.6s" begin=".8s" repeatCount="indefinite"/></rect>
+
+        <!-- judge -->
+        <path d="M 285 274 L 285 306" stroke="#6a9bcc" stroke-width="2" stroke-dasharray="5 4"/>
+        <path d="M 285 306 l -5 -9 h 10 z" fill="#6a9bcc"/>
+        <circle r="4" fill="#6a9bcc"><animateMotion dur="1.8s" begin="1s" repeatCount="indefinite" path="M 285 276 L 285 304"/></circle>
+        <rect x="90" y="312" width="390" height="92" rx="10" fill="#fff" stroke="#6a9bcc" stroke-width="2"/>
+        <text x="112" y="340" font-size="24">🤖</text>
+        <text x="148" y="338" font-size="14" font-weight="700" fill="#141413">A second AI marks the report</text>
+        <text x="148" y="360" font-size="12" fill="#5c5b57">is every number real? does it admit doubt?</text>
+        <text x="148" y="382" font-size="12" fill="#5c5b57">would it help at 3am?</text>
+        <g opacity="0"><animate attributeName="opacity" values="0;1" dur=".5s" begin="2.4s" fill="freeze"/>
+          <rect x="398" y="336" width="62" height="46" rx="8" fill="#f0eee6" stroke="#d97757" stroke-width="2"/>
+          <text x="429" y="368" text-anchor="middle" font-size="21" font-weight="700" fill="#d97757" font-family="ui-monospace,monospace">3/5</text>
+        </g>
+      </g>
+    </svg>
+  </div>
 </section>
 
 <nav>
   <button onclick="go(-1)">←</button>
   <span id="n" style="font-family:var(--mono);font-size:.8rem;color:var(--muted)"></span>
   <button onclick="go(1)">→</button>
-  <button onclick="tog()" id="t">start timer</button>
+  <button onclick="tog()" id="t">timer</button>
 </nav>
-<div id="clock">4:00 target</div>
+<div id="clock">4:00</div>
+<div class="foot">More: <a href="../docs/demo/" style="color:var(--muted)">live demo</a> ·
+  <a href="https://github.com/wjlgatech/mantisgrid-track1" style="color:var(--muted)">repo</a></div>
 
 <script>
 const S=[...document.querySelectorAll('.slide')];let i=0;
-function show(){S.forEach((s,k)=>s.classList.toggle('on',k===i));
+function show(){
+  S.forEach((s,k)=>s.classList.toggle('on',k===i));
   document.getElementById('n').textContent=`${i+1}/${S.length}`;
-  document.getElementById('bar').style.width=((i+1)/S.length*100)+'%'}
+  document.getElementById('bar').style.width=((i+1)/S.length*100)+'%';
+  // restart the SVG animations on the slide we just opened
+  const sv=S[i].querySelector('svg'); if(sv){const p=sv.parentNode,n=sv.cloneNode(true);p.replaceChild(n,sv)}
+}
 function go(d){i=Math.max(0,Math.min(S.length-1,i+d));show()}
 addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);
   if(e.key==='ArrowLeft')go(-1);if(e.key==='Home'){i=0;show()}});
