@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RCA console — evidence, graded by GLM</title>
+<style>
+:root{
+  --bg:#faf9f5; --card:#ffffff; --card2:#f0eee6; --ink:#141413; --muted:#5c5b57;
+  --line:#e3e0d6; --line2:#b0aea5; --accent:#d97757; --blue:#6a9bcc; --green:#788c5d;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6}
+header{border-bottom:1px solid var(--line);background:var(--card);padding:18px 24px}
+h1{margin:0;font-size:1.15rem;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.85rem;margin-top:3px}
+.wrap{display:grid;grid-template-columns:320px 1fr;gap:20px;padding:20px 24px;max-width:1500px;margin:0 auto}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.panel h2{margin:0 0 10px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+#cases{max-height:70vh;overflow:auto;margin:-4px}
+.case{padding:9px 11px;border:1px solid var(--line);border-radius:8px;margin:4px;cursor:pointer;background:var(--card)}
+.case:hover{border-color:var(--line2)}
+.case.on{border-color:var(--accent);background:var(--card2)}
+.case b{font-family:var(--mono);font-size:.78rem;color:var(--accent)}
+.case span{display:block;color:var(--muted);font-size:.76rem;margin-top:2px;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+button{font-family:var(--sans);font-weight:600;font-size:.85rem;padding:9px 16px;border-radius:8px;
+  border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:var(--card);color:var(--ink);border-color:var(--line2)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.stat{display:inline-flex;gap:6px;align-items:baseline;background:var(--card2);border:1px solid var(--line);
+  border-radius:999px;padding:4px 12px;font-size:.78rem}
+.stat b{font-family:var(--mono)}
+pre{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;
+  font-family:var(--mono);font-size:.78rem;line-height:1.5;white-space:pre-wrap;max-height:46vh;margin:0}
+table{border-collapse:collapse;width:100%;font-size:.78rem;font-family:var(--mono)}
+th,td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left}
+th{color:var(--muted);font-weight:600;font-family:var(--sans);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:8px}
+.g{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:10px}
+.g .n{font-size:1.5rem;font-weight:700;font-family:var(--mono)}
+.g .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.g .w{font-size:.76rem;color:var(--muted);margin-top:4px}
+.muted{color:var(--muted);font-size:.82rem}
+.err{background:#fdf0ec;border:1px solid var(--accent);color:#8a3b22;border-radius:8px;padding:10px;font-size:.82rem}
+.sp{display:inline-block;width:11px;height:11px;border:2px solid var(--line2);border-top-color:var(--accent);
+  border-radius:50%;animation:s .7s linear infinite;vertical-align:-1px}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>RCA console <span class="muted">— the agent solves for free, GLM grades the evidence</span></h1>
+  <div class="sub">Shipped agent makes <b>zero</b> model calls (measured: GLM changed 0/20 answers, twice).
+    The one job a model is suited to here is judging free-text evidence, so that is the only place it runs.</div>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <h2>Cases</h2>
+    <div id="cases"><span class="muted">loading…</span></div>
+  </div>
+
+  <div>
+    <div class="panel" style="margin-bottom:16px">
+      <h2>Diagnosis</h2>
+      <div class="row">
+        <button id="go" disabled>Solve this case</button>
+        <button id="judge" class="ghost" disabled>Grade the evidence with GLM-5.2</button>
+        <span id="stats"></span>
+      </div>
+      <div id="out"><span class="muted">Pick a case on the left.</span></div>
+    </div>
+
+    <div class="panel">
+      <h2>GLM verdict on our evidence</h2>
+      <div id="verdict"><span class="muted">Solve a case, then grade it.</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let sel=null, last=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+fetch('/api/cases').then(r=>r.json()).then(d=>{
+  if(d.error){$('cases').innerHTML=`<div class="err">${esc(d.error)}<br><br>Dataset: <code>${esc(d.dataset||'')}</code></div>`;return}
+  $('cases').innerHTML=d.cases.map(c=>
+    `<div class="case" data-id="${c.row_id}"><b>#${c.row_id} · ${esc(c.task)}</b><span>${esc(c.instruction)}</span></div>`).join('');
+  document.querySelectorAll('.case').forEach(el=>el.onclick=()=>{
+    document.querySelectorAll('.case').forEach(e=>e.classList.remove('on'));
+    el.classList.add('on'); sel=+el.dataset.id; $('go').disabled=false;
+    $('judge').disabled=true; $('out').innerHTML='<span class="muted">Ready.</span>';
+    $('verdict').innerHTML='<span class="muted">Solve a case, then grade it.</span>'; $('stats').innerHTML='';
+  });
+});
+
+$('go').onclick=async()=>{
+  $('go').disabled=true; $('out').innerHTML='<span class="sp"></span> reading telemetry…';
+  const r=await fetch('/api/solve',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({row_id:sel})});
+  const d=await r.json(); $('go').disabled=false;
+  if(d.error){$('out').innerHTML=`<div class="err">${esc(d.error)}</div>`;return}
+  last=d; $('judge').disabled=false;
+  $('stats').innerHTML=`<span class="stat">⏱ <b>${d.seconds}s</b></span>
+    <span class="stat">model calls <b>${d.model_calls}</b></span>
+    <span class="stat">cost <b>$0.0000</b></span>`;
+  $('out').innerHTML=
+    `<table><thead><tr><th>onset</th><th>component</th><th>KPI</th><th>baseline</th><th>peak</th><th>z</th></tr></thead><tbody>`+
+    d.candidates.map(c=>`<tr><td>${esc(c.onset)}</td><td>${esc(c.component)}</td><td>${esc(c.kpi)}</td>
+      <td>${c.baseline}</td><td>${c.peak}</td><td>${c.z}</td></tr>`).join('')+
+    `</tbody></table><h2 style="margin-top:16px">Evidence file</h2><pre>${esc(d.evidence)}</pre>`;
+};
+
+$('judge').onclick=async()=>{
+  $('judge').disabled=true;
+  $('verdict').innerHTML='<span class="sp"></span> GLM-5.2 is reading the evidence…';
+  const ans=last.answers.map(a=>`${a.component} / ${a.reason} / ${a.datetime}`).join('\n');
+  const r=await fetch('/api/judge',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({row_id:last.row_id,evidence:last.evidence,answer:ans})});
+  const d=await r.json(); $('judge').disabled=false;
+  if(d.error){$('verdict').innerHTML=`<div class="err">${esc(d.error)}</div>`;return}
+  const g=d.grades||{};
+  const card=(k,label)=>g[k]?`<div class="g"><div class="k">${label}</div>
+    <div class="n">${esc(g[k].score)}<span class="muted" style="font-size:.8rem">/5</span></div>
+    <div class="w">${esc(g[k].why)}</div></div>`:'';
+  $('verdict').innerHTML=
+    `<div class="row"><span class="stat">judge <b>${esc(d.judge_model)}</b></span>
+      <span class="stat">⏱ <b>${d.seconds}s</b></span>
+      <span class="stat">cost <b>$${d.usd}</b></span>
+      ${g.overall?`<span class="stat">overall <b>${esc(g.overall)}/5</b></span>`:''}</div>`+
+    (g.one_line?`<p style="margin:.3rem 0 .6rem">${esc(g.one_line)}</p>`:'')+
+    `<div class="grade">${card('grounding','Grounding')}${card('calibration','Calibration')}
+      ${card('ruled_out','Ruled out')}${card('actionability','Actionability')}</div>`+
+    (Object.keys(g).length?'':`<pre>${esc(d.raw)}</pre>`);
+};
+</script>
+</body>
+</html>

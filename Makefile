@@ -3,7 +3,7 @@ QUERIES ?= $(DATASET)/dev/query_dev.csv
 OUT     ?= out/dev
 PY      ?= python3
 
-.PHONY: help dev score cost check calib ablate significance probe compare docker clean
+.PHONY: help dev score cost check calib ablate significance probe compare webapp docker clean
 .DEFAULT_GOAL := help
 
 help:
@@ -48,6 +48,9 @@ compare: ## free vs routed vs single-model on 20 cases -> eval/routed_compare.md
 	  $(PY) score.py --predictions out/$$d/predictions.csv --queries $(QUERIES) | head -4; \
 	  test -f out/$$d/usage.jsonl && $(PY) cost.py out/$$d/usage.jsonl | tail -3 || true; \
 	done
+
+webapp: ## the RCA console on :8100 — solve free, grade with GLM (needs FEATHERLESS_API_KEY)
+	$(PY) -m uvicorn webapp.server:app --host 127.0.0.1 --port 8100
 
 docker: ## build and run exactly as the judges do, on 2 cases
 	docker build -t rca-submission .
