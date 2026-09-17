@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two slides, four minutes — MantisGrid Track 1</title>
+<style>
+:root{--bg:#faf9f5;--card:#fff;--card2:#f0eee6;--ink:#141413;--muted:#5c5b57;--line:#e3e0d6;
+--accent:#d97757;--blue:#6a9bcc;--green:#788c5d;
+--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+--sans:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+.slide{position:absolute;inset:0;display:none;padding:4vh 4vw;overflow:auto}
+.slide.on{display:block}
+.eyebrow{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.12;margin:.3rem 0 .8rem;letter-spacing:-.02em}
+.grid{display:grid;grid-template-columns:1.15fr 1fr;gap:1.2rem}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem}
+.box h3{margin:0 0 .5rem;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left}
+th{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+td.n{font-family:var(--mono)}
+tr.hi{background:var(--card2)}
+.kpis{display:flex;gap:.7rem;flex-wrap:wrap;margin:.6rem 0}
+.k{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;flex:1;min-width:110px}
+.k .lab{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.k .v{font-family:var(--mono);font-size:1.35rem;font-weight:700}
+p{font-size:.88rem;line-height:1.5;color:var(--muted);margin:.4rem 0}
+p b,li b{color:var(--ink)}
+ul{margin:.3rem 0;padding-left:1.1rem;font-size:.86rem;color:var(--muted);line-height:1.55}
+.say{margin-top:.7rem;background:var(--card);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+padding:.6rem .8rem;font-size:.8rem;color:var(--ink)}
+.say b{display:block;color:var(--accent);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.2rem}
+.do{font-family:var(--mono);font-size:.78rem;color:var(--green);font-weight:700;margin:.3rem 0}
+img{width:100%;border:1px solid var(--line);border-radius:10px;display:block}
+nav{position:fixed;bottom:12px;right:16px;display:flex;gap:6px;align-items:center;z-index:9}
+nav button{font-family:var(--sans);font-weight:600;font-size:.76rem;padding:5px 11px;border-radius:7px;
+border:1px solid #b0aea5;background:#fff;cursor:pointer}
+#clock{position:fixed;bottom:14px;left:16px;font-family:var(--mono);font-size:.76rem;color:var(--muted);z-index:9}
+</style></head><body>
+
+<section class="slide on">
+  <div class="eyebrow">MantisGrid 2026 · Track 1 · Slide 1 of 2 — what it is and what it scores</div>
+  <h1>Twelve services are screaming. One of them started it.</h1>
+  <div class="grid">
+    <div>
+      <div class="box">
+        <h3>The result — 70 dev cases, OpenRCA's own evaluator</h3>
+        <div class="kpis">
+          <div class="k"><div class="lab">score</div><div class="v">0.199</div><div class="lab">from 0.073</div></div>
+          <div class="k"><div class="lab">per case</div><div class="v">1.3s</div></div>
+          <div class="k"><div class="lab">cost</div><div class="v">$0.00</div></div>
+          <div class="k"><div class="lab">20-case run</div><div class="v">1.2min</div><div class="lab">of 20 allowed</div></div>
+        </div>
+        <p><b>2.7× the baseline.</b> The single biggest gain was a <b>timezone</b>: the starter reads
+        UTC, the data is UTC+8, so 24 of 70 cases answered blank. One line, +0.092.</p>
+      </div>
+      <div class="box" style="margin-top:.8rem">
+        <h3>Live demo — run it now</h3>
+        <div class="do">make webapp → pick a case → Solve → Grade with GLM-5.2</div>
+        <ul>
+          <li>Solves in ~3s, <b>zero model calls</b>, $0</li>
+          <li>Open the evidence: every number carried from the measurement that produced it</li>
+          <li><b>Ruled out</b> argues against our own pick — "node-6 started 540s earlier"</li>
+          <li>Then <b>GLM-5.2 grades it live</b>: 4/5, 5/5, 4/5, <b>3/5 actionability</b> — it marks us down</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="box"><h3>Architecture</h3><img src="../webapp/static/architecture.png" alt="architecture"></div>
+    </div>
+  </div>
+  <div class="say"><b>0:00 – 2:00 · say</b>
+    "Published state of the art solves about one case in nine, so this is unsolved. We got 2.7× the
+    baseline — and the biggest win was a timezone bug, not a clever idea. Here it is running: three
+    seconds, no model, and then a second model grading our evidence and marking us down."</div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">Slide 2 of 2 — what we learned, and what we got wrong</div>
+  <h1>Three of our four findings are negative. One is a retraction of our own.</h1>
+  <div class="grid">
+    <div>
+      <div class="box">
+        <h3>The confidence signal is inverted — p = 0.006</h3>
+        <table>
+          <tr><th>it said</th><th>cases</th><th>actually right</th></tr>
+          <tr><td>High confidence</td><td class="n">21</td><td class="n">0.103</td></tr>
+          <tr class="hi"><td><b>Low confidence</b></td><td class="n">34</td><td class="n"><b>0.331</b></td></tr>
+        </table>
+        <p>Escalating low-confidence cases to a human — the standard design — would have handed
+        people the work we got <b>right</b> and auto-approved the errors. <b>A confidence score measured
+        inside one instrument cannot detect "we are using the wrong instrument."</b></p>
+      </div>
+      <div class="box" style="margin-top:.8rem">
+        <h3>The model, tested twice, changed nothing</h3>
+        <table>
+          <tr><th>GLM-5.2, reasoning on</th><th>answers changed</th></tr>
+          <tr><td>table held the answer 54% of the time</td><td class="n">0 / 20</td></tr>
+          <tr class="hi"><td>after we fixed it to 96%</td><td class="n"><b>0 / 20</b></td></tr>
+        </table>
+        <p>It anchors on our sort order. So the judged run ships <b>model-free</b>, and GLM does the one
+        job with no deterministic scorer: <b>grading the evidence</b>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box"><h3>Where the accuracy is stuck</h3>
+        <img src="../webapp/static/bottleneck.png" alt="bottleneck"></div>
+      <div class="box" style="margin-top:.8rem">
+        <h3>Honest about the rest</h3>
+        <ul>
+          <li><b>Two findings retracted</b> — our own paired bootstrap said both CIs span zero</li>
+          <li><b>A third of our score</b> rides on a hand-written keyword map. Named, not hidden.</li>
+          <li><b>Held-out will be lower</b> — constants were chosen on all 70 cases. Leakage, stated.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="say"><b>2:00 – 4:00 · say</b>
+    "Our agent is most wrong exactly where it's most sure — p equals 0.006. We tested the LLM as a
+    safeguard twice and it changed nothing both times. Two of our own findings didn't survive our own
+    statistics and we retracted them. Those are the findings we'd want at 3am when something is
+    actually broken."</div>
+</section>
+
+<nav><button onclick="go(-1)">←</button><span id="n" style="font-family:var(--mono);font-size:.76rem;color:var(--muted)"></span>
+<button onclick="go(1)">→</button><button onclick="tog()" id="t">timer</button></nav>
+<div id="clock">4:00 target</div>
+<script>
+const S=[...document.querySelectorAll('.slide')];let i=0;
+function show(){S.forEach((s,k)=>s.classList.toggle('on',k===i));document.getElementById('n').textContent=`${i+1}/${S.length}`}
+function go(d){i=Math.max(0,Math.min(S.length-1,i+d));show()}
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);if(e.key==='ArrowLeft')go(-1)});
+let t=null,s=0;function tog(){const b=document.getElementById('t');
+if(t){clearInterval(t);t=null;b.textContent='resume'}else{t=setInterval(()=>{s++;
+const c=document.getElementById('clock');c.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} / 4:00`;
+c.style.color=s>240?'#d97757':''},1000);b.textContent='pause'}}
+show();
+</script></body></html>
